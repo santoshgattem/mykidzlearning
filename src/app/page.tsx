@@ -1,0 +1,82 @@
+import Link from "next/link";
+import { btn, btnGhost, btnSoft, sm } from "@/components/ui";
+
+const LADDER = [
+  { tier: "bronze", icon: "🥉", name: "Bronze", pts: "1,000 pts", reward: "₹100 pocket money" },
+  { tier: "silver", icon: "🥈", name: "Silver", pts: "10,000 pts", reward: "Gift of his choice" },
+  { tier: "gold", icon: "🥇", name: "Gold", pts: "50,000 pts", reward: "Wireless headphones" },
+  { tier: "diamond", icon: "💎", name: "Diamond", pts: "1,00,000 pts", reward: "New mobile phone" },
+] as const;
+
+const TIER_BG = {
+  bronze: "bg-bronze",
+  silver: "bg-silver",
+  gold: "bg-gold",
+  diamond: "bg-diamond",
+} as const;
+
+export default function Home() {
+  return (
+    <>
+      <header className="mx-auto flex max-w-[1100px] items-center justify-between px-5 py-3.5">
+        <span className="flex items-center gap-2 font-display text-[1.3rem] font-extrabold tracking-tight">
+          <span className="inline-flex gap-[3px]" aria-hidden>
+            <i className="block size-[9px] rounded-full bg-phy" />
+            <i className="block size-[9px] rounded-full bg-chem" />
+            <i className="block size-[9px] rounded-full bg-math" />
+            <i className="block size-[9px] rounded-full bg-bio" />
+          </span>
+          mykidzlearning
+        </span>
+        <Link href="/admin/login" className={`${btnGhost} ${sm}`}>
+          Admin
+        </Link>
+      </header>
+
+      <main className="mx-auto max-w-[1100px] px-5 py-5">
+        <section className="grid items-center gap-7 pt-7 md:grid-cols-[1.2fr_1fr]">
+          <div>
+            <h1 className="font-display text-[clamp(2rem,6vw,3.4rem)] font-extrabold tracking-tight">
+              Every chapter finished is a step closer to the reward he wants.
+            </h1>
+            <p className="mt-3.5 max-w-[46ch] text-[1.15rem] text-muted">
+              Class 11 Physics, Chemistry, Maths and Biology for CBSE and JEE. Watch the lesson,
+              pass the test, practise in the notebook, and collect points toward rewards you
+              choose.
+            </p>
+            <div className="mt-6 grid max-w-[520px] grid-cols-2 gap-3.5">
+              <Link href="/parent/login" className={`${btn} !p-4`}>
+                I’m a parent
+              </Link>
+              <Link href="/student/login" className={`${btnSoft} !p-4`}>
+                I’m a student
+              </Link>
+            </div>
+          </div>
+
+          <div className="grid gap-2.5">
+            {LADDER.map((r) => (
+              <div
+                key={r.tier}
+                className="flex items-center gap-3.5 rounded-[18px] border-2 border-line bg-surface px-4 py-3.5"
+              >
+                <div
+                  className={`grid size-[46px] flex-none place-items-center rounded-full text-[1.4rem] text-white ${TIER_BG[r.tier]}`}
+                >
+                  {r.icon}
+                </div>
+                <div>
+                  <b>
+                    {r.name}, {r.pts}
+                  </b>
+                  <div className="text-sm text-muted">{r.reward}</div>
+                </div>
+              </div>
+            ))}
+            <p className="text-sm text-muted">Parents set the points and rewards. These are examples.</p>
+          </div>
+        </section>
+      </main>
+    </>
+  );
+}

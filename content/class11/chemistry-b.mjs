@@ -1,0 +1,176 @@
+// Extra Class 11 Chemistry questions, chapters 6–9. See helpers.mjs for M / F / P.
+import { M, F, P, n, sub, sgn } from "./helpers.mjs";
+
+const PREFIX = ["meth", "eth", "prop", "but", "pent", "hex", "hept", "oct"];
+
+export const moreB = {
+  // ---------------------------------------------------------------- c6 Equilibrium
+  c6: {
+    mcq: [
+      M("dynamic-equilibrium", 1, "Chemical equilibrium is", "Dynamic", ["Static", "Never reached", "Possible only for gases"]),
+      M("dynamic-equilibrium", 1, "A reaction that can proceed in both directions is", "Reversible", ["Irreversible", "Exothermic only", "Adiabatic"]),
+      M("ph", 1, "The pH of pure water at 25 °C is", "7", ["0", "14", "1"]),
+      M("acids-bases", 1, "Which of these is a strong acid?", "HCl", ["CH₃COOH", "H₂CO₃", "HCN"]),
+      M("equilibrium-constant", 2, "In the expression for Kc, pure solids and pure liquids", "Are not included", ["Are included with their moles", "Are always squared", "Are given the value 10"]),
+      M("ph", 2, "The pH of 0.1 M HCl is", "1", ["0.1", "13", "7"]),
+      M("ph", 2, "A solution of pH 9 is", "Basic", ["Acidic", "Neutral", "Strongly acidic"]),
+      M("acids-bases", 2, "The conjugate base of H₂O is", "OH⁻", ["H₃O⁺", "O²⁻", "H₂"]),
+      M("solubility", 2, "Adding NaCl to a saturated solution of AgCl", "Decreases the solubility of AgCl", ["Increases the solubility", "Has no effect", "Dissolves all the AgCl"]),
+      M("equilibrium-constant", 3, "For N₂ + 3H₂ ⇌ 2NH₃, Kc is", "[NH₃]²/([N₂][H₂]³)", ["[NH₃]/([N₂][H₂])", "[N₂][H₂]³/[NH₃]²", "2[NH₃]/(3[H₂] + [N₂])"]),
+      M("buffers", 3, "A buffer solution", "Resists changes in pH when small amounts of acid or base are added", ["Is always neutral", "Is pure water", "Is a strong acid"]),
+      M("equilibrium-constant", 3, "For N₂ + O₂ ⇌ 2NO, the relation between Kp and Kc is", "Kp = Kc", ["Kp = Kc(RT)", "Kp = Kc(RT)²", "Kp = Kc/RT"]),
+      M("ph", 3, "The pH of 0.001 M NaOH at 25 °C is", "11", ["3", "10", "12"]),
+      M("le-chatelier", 3, "An exothermic reaction at equilibrium is heated. The equilibrium shifts", "Towards the reactants", ["Towards the products", "Not at all", "Until Kc doubles"]),
+      M("solubility", 4, "The solubility product of AgCl is 1 × 10⁻¹⁰. Its solubility in pure water is", "1 × 10⁻⁵ M", ["1 × 10⁻¹⁰ M", "1 × 10⁻² M", "2 × 10⁻⁵ M"]),
+      M("weak-acids", 4, "A 0.1 M weak acid with Ka = 10⁻⁵ has a pH of about", "3", ["5", "1", "4"]),
+      M("buffers", 4, "A mixture of 0.1 M CH₃COOH and 0.1 M CH₃COONa has a pH equal to", "The pKa of acetic acid", ["pKa + 1", "7", "pKw"]),
+      M("equilibrium-constant", 4, "For A ⇌ B, K = 4. For 2A ⇌ 2B at the same temperature, K is", "16", ["8", "4", "2"]),
+    ],
+    fib: [
+      F("dynamic-equilibrium", 1, "At equilibrium the concentrations of reactants and products remain ____.", ["constant"]),
+      F("acids-bases", 1, "An acid turns blue litmus ____.", ["red"]),
+      F("ph", 2, "At 25 °C, pH + pOH = ____.", ["14", "fourteen"]),
+      F("acids-bases", 2, "A species that accepts a proton is a Brønsted–Lowry ____.", ["base", "bronsted base", "brønsted base"]),
+      F("ph", 3, "The hydrogen ion concentration of a solution of pH 3 is ____ mol/L.", ["0.001", "10⁻³", "1e-3", "10^-3", "1 × 10⁻³", "1×10⁻³"]),
+      F("ph", 4, "The ionic product of water at 25 °C is Kw = ____.", ["10⁻¹⁴", "1e-14", "10^-14", "1 × 10⁻¹⁴", "1×10⁻¹⁴"]),
+      F("acids-bases", 4, "For a conjugate acid–base pair, Ka × Kb = ____.", ["kw"]),
+    ],
+    para: [
+      P("buffers", "In two lines, explain how a buffer resists changes in pH.", ["weak acid", "conjugate base", "added acid", "added base", "neutralise", "react", "ph", "resist", "equilibrium"]),
+      P("solubility", "In two lines, explain the common ion effect.", ["common ion", "solubility", "decreases", "equilibrium", "shifts", "suppress", "ionisation", "le chatelier"]),
+    ],
+    gen: [
+      (r) => { const x = r.pick([2, 3, 4, 5, 6]); return { l: 2, t: "ph", q: `The hydrogen ion concentration of a solution is 10${"⁻" + "⁰¹²³⁴⁵⁶⁷⁸⁹"[x]} M. Its pH is`, a: `${x}`, w: [`${14 - x}`, `${x + 1}`, `${7 - x}`] }; },
+      (r) => { const x = r.pick([2, 3, 4, 5]); return { l: 3, t: "ph", q: `A strong base solution has [OH⁻] = 10${"⁻" + "⁰¹²³⁴⁵⁶⁷⁸⁹"[x]} M at 25 °C. Its pH is`, a: `${14 - x}`, w: [`${x}`, `${14 + x}`, `${7 + x}`] }; },
+      (r) => { const [C, A, B] = r.pick([[0.2, 0.1, 0.1], [0.4, 0.2, 0.1], [0.5, 0.5, 0.1], [0.6, 0.3, 0.1]]); const K = C / (A * B); return { l: 3, t: "equilibrium-constant", q: `For A + B ⇌ C at equilibrium, [A] = ${A} M, [B] = ${B} M and [C] = ${C} M. Kc is`, a: n(K), w: [n(1 / K), n(K * 10), n(K / 2)] }; },
+      (r) => { const K = r.pick([2, 3, 5, 10]); return { l: 4, t: "equilibrium-constant", q: `For A ⇌ B, K = ${K}. For the reverse reaction B ⇌ A at the same temperature, K is`, a: n(1 / K), w: [n(K), n(K * K), n(K + 1)] }; },
+    ],
+  },
+
+  // ---------------------------------------------------------------- c7 Redox Reactions
+  c7: {
+    mcq: [
+      M("definitions", 1, "Reduction is the", "Gain of electrons", ["Loss of electrons", "Gain of protons", "Loss of neutrons"]),
+      M("oxidation-number", 1, "The oxidation number of hydrogen in most compounds is", "+1", ["−1", "0", "+2"]),
+      M("agents", 1, "A substance that is oxidised acts as a", "Reducing agent", ["Oxidising agent", "Catalyst", "Solvent"]),
+      M("oxidation-number", 1, "In a simple ionic compound the oxidation number of an ion equals", "The charge on the ion", ["The mass number", "The atomic number", "Zero always"]),
+      M("oxidation-number", 2, "The oxidation number of S in H₂SO₄ is", "+6", ["+4", "+2", "−2"]),
+      M("oxidation-number", 2, "The oxidation number of N in NH₃ is", "−3", ["+3", "0", "+5"]),
+      M("agents", 2, "In Fe + CuSO₄ → FeSO₄ + Cu, the species that is reduced is", "Cu²⁺", ["Fe", "SO₄²⁻", "Fe²⁺"]),
+      M("oxidation-number", 2, "The oxidation number of Cl in NaClO₃ is", "+5", ["+1", "+3", "+7"]),
+      M("definitions", 2, "Which of these is a redox reaction?", "Zn + 2HCl → ZnCl₂ + H₂", ["NaOH + HCl → NaCl + H₂O", "CaCO₃ → CaO + CO₂", "AgNO₃ + NaCl → AgCl + NaNO₃"]),
+      M("oxidation-number", 3, "The average oxidation number of Fe in Fe₃O₄ is", "+8/3", ["+2", "+3", "+4"]),
+      M("agents", 3, "Which is the strongest oxidising agent?", "F₂", ["Cl₂", "Br₂", "I₂"]),
+      M("agents", 3, "In acidic medium MnO₄⁻ is reduced to", "Mn²⁺", ["MnO₂", "MnO₄²⁻", "Mn"]),
+      M("oxidation-number", 3, "The oxidation number of carbon in HCHO (CH₂O) is", "0", ["+2", "−2", "+4"]),
+      M("types", 3, "A reaction in which one element is both oxidised and reduced is called", "Disproportionation", ["Displacement", "Combination", "Decomposition"]),
+      M("types", 4, "In Cl₂ + 2OH⁻ → Cl⁻ + ClO⁻ + H₂O, chlorine is", "Both oxidised and reduced", ["Only oxidised", "Only reduced", "Neither"]),
+      M("balancing", 4, "The equivalent mass of KMnO₄ in acidic medium (M = 158) is", "31.6", ["158", "52.7", "79"]),
+      M("balancing", 4, "In acidic medium, 1 mol of MnO₄⁻ oxidises how many moles of Fe²⁺?", "5", ["1", "3", "7"]),
+      M("oxidation-number", 4, "The oxidation number of P in H₃PO₄ is", "+5", ["+3", "+1", "+7"]),
+    ],
+    fib: [
+      F("definitions", 1, "The process of gaining electrons is called ____.", ["reduction"]),
+      F("agents", 1, "An oxidising agent itself gets ____.", ["reduced"]),
+      F("oxidation-number", 2, "The sum of the oxidation numbers of all atoms in a neutral compound is ____.", ["zero", "0"]),
+      F("oxidation-number", 2, "The oxidation number of Na in NaCl is ____.", ["+1", "1", "plus 1"]),
+      F("oxidation-number", 3, "The oxidation number of Cr in Cr₂O₇²⁻ is ____.", ["+6", "6"]),
+      F("oxidation-number", 4, "The oxidation number of oxygen in H₂O₂ is ____.", ["-1", "−1", "minus 1"]),
+      F("oxidation-number", 4, "The oxidation number of Mn in MnO₂ is ____.", ["+4", "4"]),
+    ],
+    para: [
+      P("definitions", "In two lines, explain why oxidation and reduction always occur together.", ["electrons", "lost", "gained", "oxidation", "reduction", "simultaneously", "transfer", "redox", "one", "other"]),
+      P("agents", "In two lines, explain what an oxidising agent is, with an example.", ["gains electrons", "reduced", "oxidises", "oxidising agent", "accepts", "kmno4", "chlorine", "oxygen", "another"]),
+    ],
+    gen: [
+      (r) => { const [lbl, v] = r.pick([["S in SO₂", 4], ["S in H₂S", -2], ["N in HNO₃", 5], ["N in NO₂", 4], ["C in CO₂", 4], ["C in CH₄", -4], ["Cl in HClO₄", 7], ["Cl in HOCl", 1], ["Cr in CrO₃", 6], ["P in PO₄³⁻", 5], ["Mn in KMnO₄", 7], ["N in NH₄⁺", -3], ["S in SO₃", 6]]); return { l: 3, t: "oxidation-number", q: `The oxidation number of ${lbl} is`, a: sgn(v), w: [sgn(v - 1), sgn(v - 2), sgn(-v)] }; },
+      (r) => { const [lbl, e] = r.pick([["MnO₄⁻ → Mn²⁺", 5], ["Fe³⁺ → Fe²⁺", 1], ["Cr₂O₇²⁻ → 2Cr³⁺", 6], ["Cu²⁺ → Cu", 2], ["Zn → Zn²⁺", 2], ["Al → Al³⁺", 3]]); return { l: 3, t: "balancing", q: `How many electrons are transferred in the change ${lbl}?`, a: `${e}`, w: [`${e + 1}`, `${e + 2}`, `${Math.max(1, e - 1) === e ? e + 3 : e - 1}`] }; },
+    ],
+  },
+
+  // ---------------------------------------------------------------- c8 Organic Chemistry: Basic Principles and Techniques
+  c8: {
+    mcq: [
+      M("classification", 1, "Organic compounds always contain", "Carbon", ["Oxygen", "Nitrogen", "Sulphur"]),
+      M("functional-groups", 1, "The functional group –OH is present in", "Alcohols", ["Aldehydes", "Ketones", "Ethers"]),
+      M("nomenclature", 1, "The simplest alkyne is", "Ethyne", ["Methyne", "Ethene", "Propyne"]),
+      M("classification", 1, "Methane has the molecular formula", "CH₄", ["CH₃", "C₂H₆", "CH₂"]),
+      M("nomenclature", 2, "The IUPAC name of CH₃CHO is", "Ethanal", ["Ethanol", "Methanal", "Propanal"]),
+      M("nomenclature", 2, "The number of carbon atoms in propane is", "3", ["2", "4", "5"]),
+      M("nomenclature", 2, "The IUPAC name of (CH₃)₂CHCH₃ is", "2-Methylpropane", ["Butane", "2-Methylbutane", "Propane"]),
+      M("classification", 2, "Which of these is a saturated hydrocarbon?", "Ethane", ["Ethene", "Ethyne", "Benzene"]),
+      M("isomerism", 2, "Chain isomers differ in", "The arrangement of the carbon chain", ["The functional group", "The position of a double bond only", "The molecular formula"]),
+      M("isomerism", 3, "Which pair shows functional group isomerism?", "CH₃CH₂OH and CH₃OCH₃", ["CH₃CH₂CH₂CH₃ and (CH₃)₃CH", "CH₃CH₂CH₂OH and CH₃CH(OH)CH₃", "1-Chloropropane and 2-chloropropane"]),
+      M("electronic-effects", 3, "Which group shows a –I effect?", "–NO₂", ["–CH₃", "–C₂H₅", "–O⁻"]),
+      M("electronic-effects", 3, "Hyperconjugation involves", "Delocalisation of σ electrons of a C–H bond into an adjacent π system or empty p orbital", ["Delocalisation of lone pairs only", "Transfer of whole electrons between atoms", "Movement of the nuclei"]),
+      M("intermediates", 3, "A free radical has", "An unpaired electron", ["A positive charge", "A negative charge", "A complete octet"]),
+      M("reagents", 3, "Which of these is an electrophile?", "NO₂⁺", ["OH⁻", "NH₃", "H₂O"]),
+      M("isomerism", 4, "The number of structural isomers of C₅H₁₂ is", "3", ["2", "4", "5"]),
+      M("intermediates", 4, "The correct order of stability of carbocations is", "3° > 2° > 1° > methyl", ["Methyl > 1° > 2° > 3°", "1° > 2° > 3°", "2° > 3° > 1°"]),
+      M("analysis", 4, "Kjeldahl’s method is used to estimate", "Nitrogen", ["Carbon", "Halogens", "Sulphur"]),
+      M("analysis", 4, "A Prussian blue colour in the Lassaigne test (with FeSO₄ and FeCl₃) shows", "Nitrogen", ["Sulphur", "Chlorine", "Phosphorus"]),
+    ],
+    fib: [
+      F("classification", 1, "Compounds made of carbon and hydrogen only are called ____.", ["hydrocarbons", "hydrocarbon"]),
+      F("functional-groups", 1, "The –COOH group is the ____ acid group.", ["carboxylic"]),
+      F("functional-groups", 2, "An atom or group that decides the properties of an organic compound is its ____ group.", ["functional"]),
+      F("electronic-effects", 2, "The permanent polarisation of a σ bond due to electronegativity difference is the ____ effect.", ["inductive"]),
+      F("intermediates", 3, "A species with a positive charge on a carbon atom is called a ____.", ["carbocation", "carbonium ion", "carbonium"]),
+      F("analysis", 4, "In Kjeldahl’s method, nitrogen is converted into ____ sulphate.", ["ammonium"]),
+      F("electronic-effects", 4, "The movement of electron pairs in resonance is shown with ____ arrows.", ["curved", "curly"]),
+    ],
+    para: [
+      P("intermediates", "In two lines, explain why tertiary carbocations are more stable than primary ones.", ["alkyl groups", "+i effect", "hyperconjugation", "electron donating", "positive charge", "stabilise", "three alkyl", "delocalised"]),
+      P("analysis", "In two lines, explain how chromatography separates the components of a mixture.", ["stationary phase", "mobile phase", "adsorbed", "different rates", "components", "separate", "solvent", "moves", "affinity"]),
+    ],
+    gen: [
+      (r) => { const k = r.pick([3, 4, 5, 6, 7, 8]); return { l: 2, t: "nomenclature", q: `The molecular formula of the alkane with ${k} carbon atoms is`, a: `C${sub(k)}H${sub(2 * k + 2)}`, w: [`C${sub(k)}H${sub(2 * k)}`, `C${sub(k)}H${sub(2 * k - 2)}`, `C${sub(k)}H${sub(2 * k + 1)}`] }; },
+      (r) => { const [k, c] = r.pick([[4, 2], [5, 3], [6, 5], [7, 9]]); return { l: 4, t: "isomerism", q: `The number of structural isomers of the alkane C${sub(k)}H${sub(2 * k + 2)} is`, a: `${c}`, w: [`${c + 1}`, `${c + 2}`, `${c - 1}`] }; },
+      (r) => { const k = r.pick([2, 3, 4, 5]); return { l: 3, t: "classification", q: `The alkane with ${k} carbon atoms has how many σ bonds in total?`, a: `${3 * k + 1}`, w: [`${3 * k}`, `${2 * k + 1}`, `${4 * k}`] }; },
+    ],
+  },
+
+  // ---------------------------------------------------------------- c9 Hydrocarbons
+  c9: {
+    mcq: [
+      M("nomenclature", 1, "The simplest alkene is", "Ethene", ["Methene", "Propene", "Ethyne"]),
+      M("classification", 1, "Alkenes contain", "At least one C=C double bond", ["Only single bonds", "A C≡C triple bond", "A benzene ring only"]),
+      M("classification", 1, "Alkynes contain", "A C≡C triple bond", ["Only C–C single bonds", "A C=C double bond only", "A benzene ring"]),
+      M("alkanes", 1, "Natural gas consists mainly of", "Methane", ["Ethane", "Butane", "Propane"]),
+      M("alkanes", 2, "Alkanes are generally", "Unreactive towards acids and bases", ["Highly reactive towards acids", "Soluble in water", "Acidic"]),
+      M("alkenes", 2, "Ethene reacts with H₂ over Ni to give", "Ethane", ["Methane", "Ethyne", "Propane"]),
+      M("alkynes", 2, "The hybridisation of carbon in ethyne is", "sp", ["sp²", "sp³", "sp³d"]),
+      M("alkenes", 2, "Bromine water is decolourised by", "Ethene", ["Ethane", "Methane", "Benzene"]),
+      M("alkynes", 2, "The number of π bonds in ethyne is", "2", ["1", "3", "0"]),
+      M("alkenes", 3, "HBr adds to propene (no peroxide) to give mainly", "2-Bromopropane", ["1-Bromopropane", "Propane", "Propyne"]),
+      M("alkenes", 3, "Ozonolysis of ethene followed by reductive work-up gives", "Methanal (two molecules)", ["Ethanal", "Ethanol", "Methane"]),
+      M("alkynes", 3, "Which is the most acidic: ethane, ethene or ethyne?", "Ethyne", ["Ethane", "Ethene", "All equal"]),
+      M("alkanes", 3, "The Wurtz reaction of CH₃Br with sodium gives", "Ethane", ["Methane", "Propane", "Butane"]),
+      M("aromatic", 3, "In the nitration of benzene, the attacking electrophile is", "NO₂⁺", ["NO₃⁻", "NO₂⁻", "H⁺"]),
+      M("aromatic", 4, "Which group is meta-directing in electrophilic substitution of benzene?", "–NO₂", ["–OH", "–CH₃", "–Cl"]),
+      M("alkynes", 4, "Ethyne reacts with ammoniacal silver nitrate to give", "A white precipitate of silver acetylide", ["A silver mirror", "Ethane", "Silver oxide"]),
+      M("alkenes", 4, "2-Butene reacts with Br₂ in CCl₄ to give", "2,3-Dibromobutane", ["1,2-Dibromobutane", "2-Bromobutane", "1,1-Dibromobutane"]),
+      M("alkanes", 4, "Which conformation of ethane is more stable?", "Staggered", ["Eclipsed", "Both equally", "Neither"]),
+    ],
+    fib: [
+      F("classification", 1, "The homologous series with general formula CₙH₂ₙ₊₂ is called the ____.", ["alkanes", "alkane", "paraffins"]),
+      F("aromatic", 1, "Hydrocarbons containing a benzene ring are called ____ hydrocarbons.", ["aromatic"]),
+      F("alkenes", 2, "The addition of hydrogen to an alkene is called ____.", ["hydrogenation"]),
+      F("alkenes", 2, "The C=C bond in an alkene consists of one σ bond and one ____ bond.", ["π", "pi"]),
+      F("alkenes", 3, "Alkenes show ____ isomerism when each carbon of the double bond has two different groups.", ["geometrical", "geometric", "cis-trans", "cis trans"]),
+      F("alkanes", 4, "Complete combustion of ethane gives CO₂ and ____.", ["h₂o", "water", "h2o"]),
+      F("alkenes", 4, "By Markovnikov’s rule, the negative part of the reagent attaches to the carbon with ____ hydrogens.", ["fewer", "less", "lesser", "fewest"]),
+    ],
+    para: [
+      P("alkenes", "In two lines, explain Markovnikov’s rule with an example.", ["unsymmetrical", "alkene", "hydrogen", "more hydrogen", "negative part", "less hydrogen", "propene", "carbocation", "stable"]),
+      P("alkynes", "In two lines, explain why alkynes are more acidic than alkenes.", ["sp", "s-character", "electronegativity", "carbanion", "stable", "hydrogen", "50%", "acidic"]),
+    ],
+    gen: [
+      (r) => { const k = r.pick([2, 3, 4, 5, 6]); return { l: 2, t: "alkenes", q: `The molecular formula of the alkene with ${k} carbon atoms is`, a: `C${sub(k)}H${sub(2 * k)}`, w: [`C${sub(k)}H${sub(2 * k + 2)}`, `C${sub(k)}H${sub(2 * k - 2)}`, `C${sub(k)}H${sub(2 * k - 1)}`] }; },
+      (r) => { const k = r.pick([3, 4, 5, 6]); return { l: 2, t: "alkynes", q: `The molecular formula of the alkyne with ${k} carbon atoms is`, a: `C${sub(k)}H${sub(2 * k - 2)}`, w: [`C${sub(k)}H${sub(2 * k)}`, `C${sub(k)}H${sub(2 * k + 2)}`, `C${sub(k)}H${sub(2 * k - 1)}`] }; },
+      (r) => { const k = r.pick([1, 2, 3, 4, 5]); return { l: 3, t: "alkanes", q: `Complete combustion of 1 mol of the alkane with ${k} carbon atoms gives how many moles of CO₂?`, a: `${k}`, w: [`${k + 1}`, `${2 * k}`, `${2 * k + 2}`] }; },
+      (r) => { const k = r.pick([1, 2, 3, 4, 5]); return { l: 3, t: "alkanes", q: `Complete combustion of 1 mol of the alkane with ${k} carbon atoms gives how many moles of water?`, a: `${k + 1}`, w: [`${k}`, `${2 * k}`, `${2 * k + 2}`] }; },
+      (r) => { const i = r.int(0, 7); const w = [1, 3, 5].map((d) => `${PREFIX[(i + d) % 8]}-`); return { l: 1, t: "nomenclature", q: `In IUPAC names, which prefix means ${i + 1} carbon atom${i ? "s" : ""} in the chain?`, a: `${PREFIX[i]}-`, w }; },
+    ],
+  },
+};

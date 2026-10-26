@@ -1,0 +1,145 @@
+@import "tailwindcss";
+
+/* Design tokens copied from the prototype. Components use these tokens, so dark mode
+   needs no per-component variants. A data-theme attribute on <html> overrides the OS setting. */
+:root {
+  --bg: #f4f2ff;
+  --surface: #ffffff;
+  --surface2: #ece9fb;
+  --ink: #1b1640;
+  --muted: #6b6790;
+  --line: #e0dcf4;
+  --primary: #5b3df5;
+  --primary-ink: #ffffff;
+  --good: #0e9f6e;
+  --bad: #d6345b;
+  --phy: #2f7bff;
+  --chem: #e8338a;
+  --math: #f08a00;
+  --bio: #0fa978;
+  --bronze: #c9773a;
+  --silver: #8e9aae;
+  --gold: #e3a600;
+  --diamond: #1fb8e0;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14112b;
+    --surface: #1f1b3d;
+    --surface2: #2a2552;
+    --ink: #f1eeff;
+    --muted: #a9a3d1;
+    --line: #373163;
+    --primary: #8b74ff;
+    --primary-ink: #140f33;
+    --good: #34d399;
+    --bad: #ff6b8b;
+    --phy: #5b9bff;
+    --chem: #ff5fa8;
+    --math: #ffaa33;
+    --bio: #2ed39a;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #14112b;
+  --surface: #1f1b3d;
+  --surface2: #2a2552;
+  --ink: #f1eeff;
+  --muted: #a9a3d1;
+  --line: #373163;
+  --primary: #8b74ff;
+  --primary-ink: #140f33;
+  --good: #34d399;
+  --bad: #ff6b8b;
+  --phy: #5b9bff;
+  --chem: #ff5fa8;
+  --math: #ffaa33;
+  --bio: #2ed39a;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface2: var(--surface2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-primary: var(--primary);
+  --color-primary-ink: var(--primary-ink);
+  --color-good: var(--good);
+  --color-bad: var(--bad);
+  --color-phy: var(--phy);
+  --color-chem: var(--chem);
+  --color-math: var(--math);
+  --color-bio: var(--bio);
+  --color-bronze: var(--bronze);
+  --color-silver: var(--silver);
+  --color-gold: var(--gold);
+  --color-diamond: var(--diamond);
+  --font-display: var(--font-bricolage), "Trebuchet MS", system-ui, sans-serif;
+  --font-body: var(--font-nunito), "Segoe UI", system-ui, sans-serif;
+}
+
+html {
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body), "Segoe UI", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-bricolage), "Trebuchet MS", system-ui, sans-serif;
+  line-height: 1.15;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Student side: playful background and the reward-road gradient */
+.kid-bg {
+  background:
+    radial-gradient(600px 300px at 10% -5%, color-mix(in srgb, var(--chem) 18%, transparent), transparent 70%),
+    radial-gradient(500px 300px at 95% 0%, color-mix(in srgb, var(--phy) 20%, transparent), transparent 70%),
+    var(--bg);
+  min-height: 100vh;
+}
+
+.road {
+  background: linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--chem) 70%, var(--primary)));
+  color: #fff;
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.2) rotate(-30deg);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .pop {
+    animation: pop 0.6s cubic-bezier(0.2, 1.6, 0.4, 1);
+  }
+}
