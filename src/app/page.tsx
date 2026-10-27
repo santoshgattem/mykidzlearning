@@ -37,7 +37,7 @@ export default function Home() {
         <section className="grid items-center gap-7 pt-7 md:grid-cols-[1.2fr_1fr]">
           <div>
             <h1 className="font-display text-[clamp(2rem,6vw,3.4rem)] font-extrabold tracking-tight">
-              Learning is a journey. Every chapter is a step toward a successful life.
+              Learning is a journey. Every assessment is a step toward a successful life.
             </h1>
             <p className="mt-3.5 max-w-[46ch] text-[1.15rem] text-muted">
               Class 11 Physics, Chemistry, Maths and Biology for CBSE and JEE. Watch the lesson,
