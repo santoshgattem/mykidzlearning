@@ -16,6 +16,10 @@ type Props = {
   googleUrl: string;
 };
 
+const TYPE_ONLY = "Type it in your own words. Writing it yourself helps you remember.";
+// Largest jump in length that typing, autocorrect or a word suggestion could cause in one step.
+const MAX_TYPED_JUMP = 20;
+
 const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 
 export function TestRunner({ initial, title, subjectColor, videoUrl, googleUrl }: Props) {
@@ -37,6 +41,29 @@ export function TestRunner({ initial, title, subjectColor, videoUrl, googleUrl }
   const answersRef = useRef({ mcq, fib, written });
   answersRef.current = { mcq, fib, written };
   const busy = useRef(false);
+
+  // Answers must be typed. Blocks pasting (keyboard, menu, drag and drop) and any single change
+  // that adds a long run of text at once, as a paste or a text-expander tool would. Normal typing,
+  // autocorrect and IME composition add only a few characters per step, so they pass.
+  const typedOnly = {
+    onPaste: (e: React.ClipboardEvent) => { e.preventDefault(); setNotice(TYPE_ONLY); },
+    onDrop: (e: React.DragEvent) => { e.preventDefault(); setNotice(TYPE_ONLY); },
+    onBeforeInput: (e: React.FormEvent<HTMLElement>) => {
+      const t = (e.nativeEvent as InputEvent).inputType ?? "";
+      if (t === "insertFromPaste" || t === "insertFromPasteAsQuotation" || t === "insertFromDrop" || t === "insertFromYank") {
+        e.preventDefault();
+        setNotice(TYPE_ONLY);
+      }
+    },
+  };
+  const typedChange = (prev: string, next: string, set: (v: string) => void, e: React.ChangeEvent<HTMLElement>) => {
+    const composing = (e.nativeEvent as InputEvent).isComposing;
+    if (!composing && next.length - prev.length > MAX_TYPED_JUMP) {
+      setNotice(TYPE_ONLY);
+      return;
+    }
+    set(next);
+  };
 
   const send = useCallback(
     (auto: boolean) => {
@@ -189,7 +216,8 @@ export function TestRunner({ initial, title, subjectColor, videoUrl, googleUrl }
               autoComplete="off"
               disabled={q.ok || pending}
               value={q.ok ? q.answer : (fib[q.id] ?? "")}
-              onChange={(e) => setFib({ ...fib, [q.id]: e.target.value })}
+              {...typedOnly}
+              onChange={(e) => typedChange(fib[q.id] ?? "", e.target.value, (v) => setFib({ ...fib, [q.id]: v }), e)}
             />
           </div>
         ))}
@@ -216,12 +244,8 @@ export function TestRunner({ initial, title, subjectColor, videoUrl, googleUrl }
             placeholder="Write in your own words…"
             disabled={view.written.ok || pending}
             value={written}
-            onChange={(e) => setWritten(e.target.value)}
-            onPaste={(e) => {
-              e.preventDefault();
-              setNotice("Type it in your own words. Writing it yourself helps you remember.");
-            }}
-            onDrop={(e) => e.preventDefault()}
+            {...typedOnly}
+            onChange={(e) => typedChange(written, e.target.value, setWritten, e)}
           />
           {tried && view.written.feedback && (
             <div className={`mt-2.5 rounded-xl p-3.5 ${view.written.ok ? "bg-good/10" : "bg-primary/10"}`}>
