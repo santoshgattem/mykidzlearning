@@ -3,7 +3,7 @@ import { btn, btnGhost, btnSoft, sm } from "@/components/ui";
 
 const LADDER = [
   { tier: "bronze", icon: "🥉", name: "Bronze", pts: "1,000 pts", reward: "₹100 pocket money" },
-  { tier: "silver", icon: "🥈", name: "Silver", pts: "10,000 pts", reward: "Gift of his choice" },
+  { tier: "silver", icon: "🥈", name: "Silver", pts: "10,000 pts", reward: "Gift of their choice" },
   { tier: "gold", icon: "🥇", name: "Gold", pts: "50,000 pts", reward: "Wireless headphones" },
   { tier: "diamond", icon: "💎", name: "Diamond", pts: "1,00,000 pts", reward: "New mobile phone" },
 ] as const;
@@ -37,12 +37,12 @@ export default function Home() {
         <section className="grid items-center gap-7 pt-7 md:grid-cols-[1.2fr_1fr]">
           <div>
             <h1 className="font-display text-[clamp(2rem,6vw,3.4rem)] font-extrabold tracking-tight">
-              Every chapter finished is a step closer to the reward he wants.
+              Learning is a journey. Every chapter is a step toward a successful life.
             </h1>
             <p className="mt-3.5 max-w-[46ch] text-[1.15rem] text-muted">
               Class 11 Physics, Chemistry, Maths and Biology for CBSE and JEE. Watch the lesson,
-              pass the test, practise in the notebook, and collect points toward rewards you
-              choose.
+              pass the test and practise in the notebook. Build knowledge and habits that last,
+              and let small rewards celebrate each step along the way.
             </p>
             <div className="mt-6 grid max-w-[520px] grid-cols-2 gap-3.5">
               <Link href="/parent/login" className={`${btn} !p-4`}>
@@ -73,7 +73,7 @@ export default function Home() {
                 </div>
               </div>
             ))}
-            <p className="text-sm text-muted">Parents set the points and rewards. These are examples.</p>
+            <p className="text-sm text-muted">Little celebrations along the way. Parents set the points and rewards; these are examples.</p>
           </div>
         </section>
       </main>
