@@ -8,7 +8,9 @@ import { weekKey, weekStart } from "@/lib/week";
 // "Authorization: Bearer <CRON_SECRET>"; anything else is refused.
 export const maxDuration = 60;
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://www.mykidzlearning.com";
+// Links in emails must always be the public address, never localhost, even if run from a dev machine.
+const configured = process.env.NEXT_PUBLIC_SITE_URL ?? "";
+const SITE = (configured.startsWith("https://") ? configured : "https://www.mykidzlearning.com").replace(/\/+$/, "");
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export async function GET(req: Request) {
