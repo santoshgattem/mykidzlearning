@@ -64,12 +64,9 @@ export const getStudentContext = cache(async () => {
   const pct = syllabusPct(doneCount, myChapters.length);
   const level = levelForPct(pct) as Level;
 
-  // Chapters unlock in order: the first one always, the rest when the one before is passed.
-  const unlocked = (c: Chapter) => {
-    const list = chaptersOf(c.subject_id);
-    const i = list.findIndex((x) => x.id === c.id);
-    return i === 0 || (i > 0 && passed(list[i - 1].id));
-  };
+  // Every chapter in the student's group is open, in any order and any subject.
+  // Server actions and pages still check this, so a chapter outside the group stays closed.
+  const unlocked = (c: Chapter) => myChapters.some((x) => x.id === c.id);
 
   const points = student?.points ?? 0;
   const ms = ((milestones ?? []) as Milestone[]).sort((a, b) => a.points - b.points);

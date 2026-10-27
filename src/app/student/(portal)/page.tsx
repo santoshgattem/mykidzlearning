@@ -2,8 +2,11 @@ import Link from "next/link";
 import { SetupForm } from "@/components/student/setup-form";
 import { LevelCard } from "@/components/student/level-card";
 import { RewardRoad } from "@/components/student/reward-road";
-import { btn, btnGhost, card, sm } from "@/components/ui";
+import { btn, btnGhost, btnSoft, card, sm } from "@/components/ui";
 import { getStudentContext } from "@/lib/student";
+import { createClient } from "@/lib/supabase/server";
+import { WEEKLY_TARGET } from "@/lib/learning";
+import { weekStart } from "@/lib/week";
 
 export default async function StudentHome({ searchParams }: { searchParams: Promise<{ setup?: string }> }) {
   const ctx = await getStudentContext();
@@ -15,6 +18,14 @@ export default async function StudentHome({ searchParams }: { searchParams: Prom
 
   const next = ctx.nextChapter;
 
+  // Tests passed at 100% since Monday, read through the student's own session.
+  const { count: weekDone } = await (await createClient())
+    .from("test_attempts")
+    .select("id", { count: "exact", head: true })
+    .eq("student_id", ctx.user.id)
+    .gte("created_at", weekStart().toISOString());
+  const done = weekDone ?? 0;
+
   return (
     <>
       <h2 className="mb-3.5 mt-1 text-[1.6rem] font-extrabold">Hi {ctx.name} 👋</h2>
@@ -25,6 +36,23 @@ export default async function StudentHome({ searchParams }: { searchParams: Prom
       </RewardRoad>
       <LevelCard pct={ctx.pct} level={ctx.level} />
 
+      <div className={`${card} mt-4`}>
+        <div className="flex items-center justify-between gap-3">
+          <b>This week</b>
+          <span className="text-[0.88rem] text-muted">
+            {done >= WEEKLY_TARGET ? "Goal reached. Great work!" : `${WEEKLY_TARGET - done} more to reach your weekly goal`}
+          </span>
+        </div>
+        <div className="mt-2 flex gap-1.5" role="img" aria-label={`${Math.min(done, WEEKLY_TARGET)} of ${WEEKLY_TARGET} tests passed this week`}>
+          {Array.from({ length: WEEKLY_TARGET }, (_, i) => (
+            <i key={i} className={`h-2.5 flex-1 rounded-full ${i < done ? "bg-good" : "bg-surface2"}`} />
+          ))}
+        </div>
+        <div className="mt-1.5 text-[0.88rem] text-muted">
+          {Math.min(done, WEEKLY_TARGET)} of {WEEKLY_TARGET} tests passed at 100% since Monday
+        </div>
+      </div>
+
       {next && (
         <div className={`${card} mt-4 flex flex-wrap items-center justify-between gap-3`}>
           <div>
@@ -33,9 +61,16 @@ export default async function StudentHome({ searchParams }: { searchParams: Prom
               {ctx.subjectOf(next.subject_id)?.emoji} {next.title}
             </b>
           </div>
-          <Link href={`/student/chapter/${next.id}`} className={btn}>
-            Continue
-          </Link>
+          <div className="flex flex-wrap gap-2.5">
+            <Link href={`/student/chapter/${next.id}`} className={btn}>
+              Continue
+            </Link>
+            {/* A plain link: this address picks a chapter on the server, so it must not be prefetched. */}
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+            <a href="/student/random" className={btnSoft}>
+              🎲 Surprise me
+            </a>
+          </div>
         </div>
       )}
 

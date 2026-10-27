@@ -33,7 +33,8 @@ A disabled parent cannot sign in, and neither can their children.
 ## Learning rules (keep exactly as in the prototype)
 
 - Chapter steps: 1) watch video (+20, once) 2) test 3) notebook practice (+50 when parent approves).
-- Chapters unlock in order; the next one unlocks only when the previous is completed.
+- All chapters in the student's group are open: any chapter, any subject, any order (changed from "unlock in order" at the owner's request). A "Surprise me" button opens a random unfinished chapter.
+- Weekly habit: 5 tests passed at 100% per week (Monday-Sunday, India time). Saturday 6 pm IST, students below 5 get a reminder email, and so do their parents (Vercel Cron + Resend, `/api/cron/weekly-reminders`).
 - Test = 3 MCQs + 2 fill-in-the-blanks + 1 written answer.
 - **Marks are recorded only at 100%.** Correct answers are locked in; the student only redoes
   wrong ones. Never reveal correct answers. Show praise first, then "Revise this one".

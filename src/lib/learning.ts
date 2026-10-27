@@ -60,3 +60,7 @@ export const syllabusPct = (done: number, total: number) =>
   total ? Math.round((done / total) * 100) : 0;
 
 export const fmt = (n: number) => n.toLocaleString("en-IN");
+
+// Weekly habit: tests passed at 100% each Monday-Sunday (India time). Below this by Saturday
+// evening, the student and the parent get a reminder email.
+export const WEEKLY_TARGET = 5;

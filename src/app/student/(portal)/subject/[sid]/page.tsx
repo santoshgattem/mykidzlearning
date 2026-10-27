@@ -21,7 +21,7 @@ export default async function SubjectPage({ params }: { params: Promise<{ sid: s
         <span className="text-[2.4rem]">{subject.emoji}</span>
         <div>
           <h2 className="text-[1.6rem] font-extrabold">{subject.name}</h2>
-          <p className="text-[0.88rem] text-muted">Score 100% in a chapter to unlock the next one.</p>
+          <p className="text-[0.88rem] text-muted">Pick any chapter you like. Score 100% to complete it.</p>
         </div>
       </div>
 
