@@ -18,16 +18,21 @@ export async function GET(req: Request) {
   }
   if (!mailConfigured()) return NextResponse.json({ ok: false, reason: "mail_not_configured" });
 
+  // Optional ?student=<id> limits a run to one student, for testing. Still needs the secret.
+  const only = new URL(req.url).searchParams.get("student");
+
   const db = createAdminClient();
   const start = weekStart();
   const key = weekKey();
 
   // Active students who have finished set-up, with their parent's details.
-  const { data: kids } = await db
+  let q = db
     .from("students")
     .select("id, grade, grp, parent_id, profile:profiles!students_id_fkey(full_name, email, disabled), parent:profiles!students_parent_id_fkey(full_name, email, disabled)")
     .not("grade", "is", null)
     .not("grp", "is", null);
+  if (only) q = q.eq("id", only);
+  const { data: kids } = await q;
 
   let sent = 0, skipped = 0;
   for (const k of kids ?? []) {
