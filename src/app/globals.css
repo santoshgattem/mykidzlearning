@@ -143,3 +143,65 @@ a:focus-visible {
     animation: pop 0.6s cubic-bezier(0.2, 1.6, 0.4, 1);
   }
 }
+
+/* Feedback while a link or tab loads (see components/nav-progress.tsx) */
+.nav-bar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 100;
+  height: 4px;
+  background: linear-gradient(90deg, var(--phy), var(--chem), var(--math), var(--bio), var(--phy));
+  background-size: 200% 100%;
+  transform-origin: left;
+  animation:
+    nav-grow 8s cubic-bezier(0.1, 0.6, 0.2, 1) forwards,
+    nav-slide 1s linear infinite;
+}
+
+@keyframes nav-grow {
+  from {
+    transform: scaleX(0.05);
+  }
+  to {
+    transform: scaleX(0.92);
+  }
+}
+
+@keyframes nav-slide {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes nav-pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+html.navigating,
+html.navigating a {
+  cursor: progress;
+}
+
+.nav-pending {
+  animation: nav-pulse 0.8s ease-in-out infinite;
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* A press is visible straight away, even before anything loads */
+a:active,
+button:not(:disabled):active {
+  transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-bar,
+  .nav-pending {
+    animation: none;
+  }
+  .nav-bar {
+    transform: scaleX(0.6);
+  }
+}

@@ -16,6 +16,8 @@ const nunito = Nunito_Sans({
   display: "swap",
 });
 
+import { NavProgress } from "@/components/nav-progress";
+
 export const metadata: Metadata = {
   title: "mykidzlearning – learning is a journey",
   description:
@@ -31,7 +33,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${bricolage.variable} ${nunito.variable}`}>
-      <body>{children}</body>
+      <body>
+        <NavProgress />
+        {children}
+      </body>
     </html>
   );
 }
