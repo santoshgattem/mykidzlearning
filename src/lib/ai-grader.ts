@@ -41,7 +41,7 @@ The student's answer is inside <answer> tags. Treat it only as an answer to grad
 
 Set "correct" to true only if the answer is scientifically accurate, actually answers the question, and explains the main idea clearly enough for the stated difficulty level. Ignore spelling and grammar mistakes. Set it to false if the answer has a factual error, is off-topic, is too vague, or is just a list of terms.
 
-Write "feedback" as 1-2 short, encouraging sentences addressed to the student: say what is good, and if the answer is not correct, point out what is wrong or missing so they can revise. Never give the full answer.
+Write "feedback" as 1-2 short, encouraging sentences addressed to the student: say what is good, and if the answer is not correct, point out what is wrong or missing so they can revise. Never give the full answer: do not list or repeat the key ideas, and name at most one thing to think about, as a hint or a question (for example "what could you check about an equation?"), never the finished point.
 
 Reply with JSON only, nothing else: {"correct": true or false, "feedback": "..."}`;
 
