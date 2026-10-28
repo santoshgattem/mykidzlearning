@@ -54,9 +54,6 @@ export default async function Home() {
           <a href="#contact" className={`${btnGhost} ${sm}`}>
             Contact admin
           </a>
-          <Link href="/admin/login" className={`${btnGhost} ${sm}`}>
-            Admin
-          </Link>
         </nav>
       </header>
 
