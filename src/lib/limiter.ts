@@ -41,6 +41,16 @@ export async function clearAttempts(key: string) {
 export const emailKey = (scope: "student" | "staff", email: string) => `signin:${scope}:email:${sha(email.toLowerCase())}`;
 export const ipKey = (ip: string) => `signin:ip:${sha(ip)}`;
 
+// Account requests: a public form, so it is limited per address, per email and per signed-in parent.
+export const requestIpKey = (ip: string) => `request:ip:${sha(ip)}`;
+export const requestEmailKey = (email: string) => `request:email:${sha(email.toLowerCase())}`;
+export const requestUserKey = (id: string) => `request:user:${id}`;
+export const REQUEST_LIMITS = {
+  perIp: { max: 5, windowSeconds: 60 * 60 }, // 5 an hour from one address
+  perEmail: { max: 3, windowSeconds: 24 * 60 * 60 }, // 3 a day for one email address
+  perParent: { max: 5, windowSeconds: 24 * 60 * 60 },
+};
+
 export const SIGNIN_LIMITS = {
   perEmail: { max: 5, windowSeconds: 15 * 60 }, // matches the student PIN lock: 5 tries, 15 minutes
   perIp: { max: 60, windowSeconds: 15 * 60 }, // generous: a whole school may share one address

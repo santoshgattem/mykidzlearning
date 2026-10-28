@@ -8,7 +8,7 @@ export default async function AdminPage() {
   const me = await requireRole("admin");
   const db = createAdminClient();
 
-  const [{ data: parents }, { data: students }, { data: admins }, { data: attempts }] =
+  const [{ data: parents }, { data: students }, { data: admins }, { data: attempts }, { data: requests }] =
     await Promise.all([
       db
         .from("profiles")
@@ -18,6 +18,7 @@ export default async function AdminPage() {
       db.from("students").select("id, parent_id, points"),
       db.from("profiles").select("id, full_name, email").eq("role", "admin").order("created_at"),
       db.from("test_attempts").select("student_id"),
+      db.from("parent_requests").select("id, full_name, email, phone, message, requested_by, created_at").eq("status", "pending").order("created_at"),
     ]);
 
   const studentIds = (students ?? []).map((s) => s.id);
@@ -62,6 +63,9 @@ export default async function AdminPage() {
           parents={rows}
           admins={(admins ?? []).map((a) => ({ id: a.id, name: a.full_name, email: a.email }))}
           stats={stats}
+          requests={(requests ?? []).map((r) => ({
+            id: r.id, name: r.full_name, email: r.email, phone: r.phone, message: r.message, createdAt: r.created_at, byParent: !!r.requested_by,
+          }))}
         />
       </main>
     </>

@@ -3,6 +3,7 @@ import {
   AddChildForm, BonusForm, ChildSettings, MarkGivenButton, NotebookButtons, RewardsEditor,
   VideoLinksForm, type VideoSubject,
 } from "@/components/parent-forms";
+import { RequestAccountForm } from "@/components/request-account-form";
 import { btnGhost, card, sm, Tag, TopBar } from "@/components/ui";
 import { signOut } from "@/app/actions/auth";
 import { requireRole } from "@/lib/auth";
@@ -322,6 +323,12 @@ export default async function ParentPage({ searchParams }: { searchParams: Searc
         )}
 
         {tab === "settings" && <ChildSettings key={kid.id + kid.name} kidId={kid.id} name={kid.name} classText={classText} />}
+
+        <details className={`${card} mt-8`}>
+          <summary className="cursor-pointer font-bold">Need an account for your partner or another parent?</summary>
+          <p className="mb-3 mt-2 text-[0.9rem] text-muted">Send a request to the admin, who will create the account and share the sign-in details.</p>
+          <RequestAccountForm signedIn compact />
+        </details>
       </main>
     </>
   );

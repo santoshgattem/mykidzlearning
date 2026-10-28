@@ -4,7 +4,9 @@ import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
   addAdmin,
+  approveRequest,
   createParent,
+  dismissRequest,
   deleteParent,
   removeAdmin,
   resetParentPassword,
@@ -14,6 +16,8 @@ import {
 } from "@/app/admin/actions";
 import { ChangePasswordForm } from "@/components/change-password-form";
 import { btn, btnBad, btnGhost, btnSoft, card, input, label, sm, Tag } from "@/components/ui";
+
+export type RequestRow = { id: string; name: string; email: string; phone: string | null; message: string | null; createdAt: string; byParent: boolean };
 
 export type ParentRow = {
   id: string;
@@ -31,10 +35,12 @@ type Props = {
   parents: ParentRow[];
   admins: { id: string; name: string; email: string }[];
   stats: { parents: number; disabled: number; students: number; tested: number; points: number };
+  requests: RequestRow[];
 };
 
 const TABS = [
   ["parents", "Parent accounts"],
+  ["requests", "Requests"],
   ["create", "Create parent"],
   ["settings", "Admin settings"],
 ] as const;
@@ -42,7 +48,7 @@ type Tab = (typeof TABS)[number][0];
 
 const fmt = (n: number) => n.toLocaleString("en-IN");
 
-export function AdminConsole({ me, parents, admins, stats }: Props) {
+export function AdminConsole({ me, parents, admins, stats, requests }: Props) {
   const router = useRouter();
   const [tab, setTab] = useState<Tab>("parents");
   const [query, setQuery] = useState("");
@@ -97,6 +103,9 @@ export function AdminConsole({ me, parents, admins, stats }: Props) {
             className={`-mb-0.5 whitespace-nowrap border-b-[3px] px-3.5 py-2.5 font-bold ${tab === id ? "border-primary text-primary" : "border-transparent text-muted"}`}
           >
             {text}
+            {id === "requests" && requests.length > 0 && (
+              <span className="ml-1.5 rounded-full bg-primary px-2 py-0.5 text-[0.75rem] text-primary-ink">{requests.length}</span>
+            )}
           </button>
         ))}
       </div>
@@ -209,6 +218,44 @@ export function AdminConsole({ me, parents, admins, stats }: Props) {
                 </button>
               )}
             </>
+          )}
+        </section>
+      )}
+
+      {tab === "requests" && (
+        <section className={`${card} flex flex-col gap-3.5`}>
+          <h3 className="text-[1.15rem] font-bold">Parent account requests</h3>
+          <p className="text-[0.88rem] text-muted">
+            People ask for an account from the parent sign-in page, or a parent asks for a partner’s account. Approving creates the account
+            with a temporary password, which you then pass on.
+          </p>
+          {requests.length === 0 ? (
+            <p className="text-muted">No requests waiting.</p>
+          ) : (
+            requests.map((r) => (
+              <div key={r.id} className="rounded-[18px] border-2 border-line p-3.5">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span>
+                    <b>{r.name}</b> <span className="text-[0.88rem] text-muted">{r.email}{r.phone ? ` · ${r.phone}` : ""}</span>
+                  </span>
+                  <span className="flex items-center gap-2 text-[0.8rem] text-muted">
+                    {r.byParent && <Tag>From a parent</Tag>}
+                    {new Date(r.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+                  </span>
+                </div>
+                {r.message && <p className="mt-1.5 whitespace-pre-line text-[0.9rem]">“{r.message}”</p>}
+                <div className="mt-2.5 flex flex-wrap gap-2.5">
+                  <button disabled={busy} className={`${btn} ${sm}`} onClick={() => run(() => approveRequest(r.id))}>Approve and create account</button>
+                  <button
+                    disabled={busy}
+                    className={`${btnGhost} ${sm}`}
+                    onClick={() => { if (confirm(`Dismiss the request from ${r.name}?`)) run(() => dismissRequest(r.id)); }}
+                  >
+                    Dismiss
+                  </button>
+                </div>
+              </div>
+            ))
           )}
         </section>
       )}

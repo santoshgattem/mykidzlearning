@@ -83,6 +83,9 @@ export const fmt = (n: number) => n.toLocaleString("en-IN");
 // Weekly habit: tests passed at 100% each Monday-Sunday (India time). Below this by Saturday
 // evening, the student and the parent get a reminder email.
 export const WEEKLY_TARGET = 5;
+// Wednesday 6 pm India time: a student who has passed fewer than this many tests so far is behind pace
+// for 5 a week, and gets a friendly nudge (as does their parent).
+export const MIDWEEK_MIN = 2;
 
 // JEE Main style papers: +4 right, -1 wrong multiple-choice, 0 wrong numerical. 90 questions, 300 marks.
 export const PAPER = {

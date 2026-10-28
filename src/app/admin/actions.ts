@@ -179,3 +179,34 @@ export async function removeAdmin(adminId: string): Promise<Result> {
   revalidatePath("/admin");
   return { ok: true, message: "Admin removed." };
 }
+
+// ---------------------------------------------------------------- account requests
+// Approving creates the parent account (temporary password, shown to the admin to pass on) and
+// closes the request. Dismissing just closes it.
+export async function approveRequest(requestId: string): Promise<Result> {
+  const admin = await requireAdmin();
+  const db = createAdminClient();
+  const { data: req } = await db.from("parent_requests").select("id, full_name, email, phone, status").eq("id", requestId).maybeSingle();
+  if (!req || req.status !== "pending") return { ok: false, error: "That request has already been handled." };
+
+  const name = req.full_name.slice(0, 80);
+  const email = req.email.trim().toLowerCase();
+  const password = generateTempPassword();
+  const r = await createAccount("parent", admin.id, { name, email, phone: req.phone ?? "", password });
+  if (!r.ok) return r;
+
+  await db.from("parent_requests").update({ status: "approved", handled_at: new Date().toISOString(), handled_by: admin.id }).eq("id", req.id);
+  revalidatePath("/admin");
+  return { ok: true, flash: { kind: "created", name, email, password } };
+}
+
+export async function dismissRequest(requestId: string): Promise<Result> {
+  const admin = await requireAdmin();
+  const { data } = await createAdminClient()
+    .from("parent_requests")
+    .update({ status: "dismissed", handled_at: new Date().toISOString(), handled_by: admin.id })
+    .eq("id", requestId).eq("status", "pending").select("id");
+  if (!data?.length) return { ok: false, error: "That request has already been handled." };
+  revalidatePath("/admin");
+  return { ok: true, message: "Request dismissed." };
+}

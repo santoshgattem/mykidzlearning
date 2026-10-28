@@ -34,7 +34,8 @@ A disabled parent cannot sign in, and neither can their children.
 
 - Chapter steps: 1) watch video (+20, once) 2) test 3) notebook practice (+50 when parent approves).
 - All chapters in the student's group are open: any chapter, any subject, any order (changed from "unlock in order" at the owner's request). A "Surprise me" button opens a random unfinished chapter.
-- Weekly habit: 5 tests passed at 100% per week (Monday-Sunday, India time). Saturday 6 pm IST, students below 5 get a reminder email, and so do their parents (Vercel Cron + Resend, `/api/cron/weekly-reminders`).
+- Weekly habit: 5 tests passed at 100% per week (Monday-Sunday, India time). Reminder emails to the student and the parent (Vercel Cron + Resend, logic in `src/lib/reminders.ts`): Wednesday 6 pm IST for students who have passed fewer than `MIDWEEK_MIN` (2) so far (`/api/cron/midweek-reminders`), and Saturday 6 pm IST for anyone below 5 (`/api/cron/weekly-reminders`). Each kind is sent at most once per student per week.
+- Parent account requests: a public form on the parent sign-in page (and a "request another parent" form inside the parent portal) stores a request in `parent_requests` (server-only, rate-limited, honeypot). Admins are emailed and see a Requests tab; approving creates the parent account with a temporary password for the admin to pass on.
 - Test = 3 MCQs + 2 fill-in-the-blanks + 1 written answer.
 - **Marks are recorded only at 100%.** Correct answers are locked in; the student only redoes
   wrong ones. Never reveal correct answers. Show praise first, then "Revise this one".
