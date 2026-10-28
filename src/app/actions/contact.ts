@@ -9,7 +9,7 @@ export type ContactState = { ok: true; message: string } | { ok: false; error: s
 const validEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) && e.length <= 254;
 // Plain text only: line breaks are kept in the message, other control characters are dropped.
 const clean = (v: FormDataEntryValue | null, max: number, keepNewlines = false) =>
-  String(v ?? "").replace(keepNewlines ? /[\u0000-\u0009\u000B-\u001F\u007F]+/g : /[\u0000-\u001F\u007F]+/g, " ").trim().slice(0, max);
+  String(v ?? "").replace(/\r\n?/g, "\n").replace(keepNewlines ? /[\u0000-\u0009\u000B-\u001F\u007F]+/g : /[\u0000-\u001F\u007F]+/g, " ").trim().slice(0, max);
 
 const THANKS = "Thank you. Your message has been sent to the admin, who will reply by email.";
 
