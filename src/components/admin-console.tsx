@@ -6,8 +6,10 @@ import {
   addAdmin,
   approveRequest,
   createParent,
+  deleteMessage,
   deleteNews,
   dismissRequest,
+  markMessageDone,
   saveNews,
   setNewsPublished,
   type NewsInput,
@@ -21,6 +23,7 @@ import {
 import { ChangePasswordForm } from "@/components/change-password-form";
 import { btn, btnBad, btnGhost, btnSoft, card, input, label, sm, Tag } from "@/components/ui";
 
+export type MessageRow = { id: string; name: string; email: string; phone: string | null; message: string; done: boolean; createdAt: string };
 export type NewsRow = { id: string; category: string; year: number; headline: string; title: string; body: string; sourceName: string; sourceUrl: string; published: boolean; position: number };
 export type RequestRow = { id: string; name: string; email: string; phone: string | null; message: string | null; createdAt: string; byParent: boolean };
 
@@ -42,11 +45,13 @@ type Props = {
   stats: { parents: number; disabled: number; students: number; tested: number; points: number };
   requests: RequestRow[];
   news: NewsRow[];
+  messages: MessageRow[];
 };
 
 const TABS = [
   ["parents", "Parent accounts"],
   ["requests", "Requests"],
+  ["messages", "Messages"],
   ["news", "News"],
   ["create", "Create parent"],
   ["settings", "Admin settings"],
@@ -55,7 +60,7 @@ type Tab = (typeof TABS)[number][0];
 
 const fmt = (n: number) => n.toLocaleString("en-IN");
 
-export function AdminConsole({ me, parents, admins, stats, requests, news }: Props) {
+export function AdminConsole({ me, parents, admins, stats, requests, news, messages }: Props) {
   const router = useRouter();
   const [tab, setTab] = useState<Tab>("parents");
   const [query, setQuery] = useState("");
@@ -110,6 +115,9 @@ export function AdminConsole({ me, parents, admins, stats, requests, news }: Pro
             className={`-mb-0.5 whitespace-nowrap border-b-[3px] px-3.5 py-2.5 font-bold ${tab === id ? "border-primary text-primary" : "border-transparent text-muted"}`}
           >
             {text}
+            {id === "messages" && messages.some((m) => !m.done) && (
+              <span className="ml-1.5 rounded-full bg-primary px-2 py-0.5 text-[0.75rem] text-primary-ink">{messages.filter((m) => !m.done).length}</span>
+            )}
             {id === "requests" && requests.length > 0 && (
               <span className="ml-1.5 rounded-full bg-primary px-2 py-0.5 text-[0.75rem] text-primary-ink">{requests.length}</span>
             )}
@@ -264,6 +272,30 @@ export function AdminConsole({ me, parents, admins, stats, requests, news }: Pro
               </div>
             ))
           )}
+        </section>
+      )}
+
+      {tab === "messages" && (
+        <section className={`${card} flex flex-col gap-3.5`}>
+          <h3 className="text-[1.15rem] font-bold">Messages from the main page</h3>
+          <p className="text-[0.88rem] text-muted">Sent with “Contact the admin”. Reply from your own email, then mark the message done.</p>
+          {messages.length === 0 ? <p className="text-muted">No messages yet.</p> : messages.map((m) => (
+            <div key={m.id} className={`rounded-[18px] border-2 border-line p-3.5 ${m.done ? "opacity-60" : ""}`}>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span><b>{m.name}</b> <span className="text-[0.88rem] text-muted">{m.email}{m.phone ? ` · ${m.phone}` : ""}</span></span>
+                <span className="flex items-center gap-2 text-[0.8rem] text-muted">
+                  {m.done && <Tag>Done</Tag>}
+                  {new Date(m.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+                </span>
+              </div>
+              <p className="mt-1.5 whitespace-pre-line text-[0.95rem]">{m.message}</p>
+              <div className="mt-2.5 flex flex-wrap gap-2">
+                <a className={`${btn} ${sm}`} href={`mailto:${m.email}?subject=${encodeURIComponent("Re: your message to mykidzlearning")}`}>Reply by email</a>
+                {!m.done && <button disabled={busy} className={`${btnSoft} ${sm}`} onClick={() => run(() => markMessageDone(m.id))}>Mark done</button>}
+                <button disabled={busy} className={`${btnBad} ${sm}`} onClick={() => { if (confirm("Delete this message?")) run(() => deleteMessage(m.id)); }}>Delete</button>
+              </div>
+            </div>
+          ))}
         </section>
       )}
 

@@ -265,3 +265,22 @@ export async function deleteNews(id: string): Promise<Result> {
   revalidatePath("/admin");
   return { ok: true, message: "Slide deleted." };
 }
+
+// ---------------------------------------------------------------- messages from "Contact the admin"
+export async function markMessageDone(id: string): Promise<Result> {
+  const admin = await requireAdmin();
+  const { data } = await createAdminClient()
+    .from("contact_messages").update({ status: "done", handled_at: new Date().toISOString(), handled_by: admin.id })
+    .eq("id", id).eq("status", "new").select("id");
+  if (!data?.length) return { ok: false, error: "That message has already been handled." };
+  revalidatePath("/admin");
+  return { ok: true, message: "Marked as done." };
+}
+
+export async function deleteMessage(id: string): Promise<Result> {
+  await requireAdmin();
+  const { error } = await createAdminClient().from("contact_messages").delete().eq("id", id);
+  if (error) return { ok: false, error: "Couldn’t delete the message." };
+  revalidatePath("/admin");
+  return { ok: true, message: "Message deleted." };
+}

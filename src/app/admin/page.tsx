@@ -8,7 +8,7 @@ export default async function AdminPage() {
   const me = await requireRole("admin");
   const db = createAdminClient();
 
-  const [{ data: parents }, { data: students }, { data: admins }, { data: attempts }, { data: requests }, { data: news }] =
+  const [{ data: parents }, { data: students }, { data: admins }, { data: attempts }, { data: requests }, { data: news }, { data: messages }] =
     await Promise.all([
       db
         .from("profiles")
@@ -20,6 +20,7 @@ export default async function AdminPage() {
       db.from("test_attempts").select("student_id"),
       db.from("parent_requests").select("id, full_name, email, phone, message, requested_by, created_at").eq("status", "pending").order("created_at"),
       db.from("news_items").select("id, category, year, headline, title, body, source_name, source_url, published, position").order("position").order("year", { ascending: false }),
+      db.from("contact_messages").select("id, full_name, email, phone, message, status, created_at").order("created_at", { ascending: false }).limit(100),
     ]);
 
   const studentIds = (students ?? []).map((s) => s.id);
@@ -64,6 +65,7 @@ export default async function AdminPage() {
           parents={rows}
           admins={(admins ?? []).map((a) => ({ id: a.id, name: a.full_name, email: a.email }))}
           stats={stats}
+          messages={(messages ?? []).map((m) => ({ id: m.id, name: m.full_name, email: m.email, phone: m.phone, message: m.message, done: m.status === "done", createdAt: m.created_at }))}
           news={(news ?? []).map((n) => ({ id: n.id, category: n.category, year: n.year, headline: n.headline, title: n.title, body: n.body, sourceName: n.source_name, sourceUrl: n.source_url, published: n.published, position: n.position }))}
           requests={(requests ?? []).map((r) => ({
             id: r.id, name: r.full_name, email: r.email, phone: r.phone, message: r.message, createdAt: r.created_at, byParent: !!r.requested_by,

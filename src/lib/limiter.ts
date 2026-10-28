@@ -51,6 +51,14 @@ export const REQUEST_LIMITS = {
   perParent: { max: 5, windowSeconds: 24 * 60 * 60 },
 };
 
+// "Contact the admin" on the main page: a public form, so it is limited per address and per email.
+export const contactIpKey = (ip: string) => `contact:ip:${sha(ip)}`;
+export const contactEmailKey = (email: string) => `contact:email:${sha(email.toLowerCase())}`;
+export const CONTACT_LIMITS = {
+  perIp: { max: 5, windowSeconds: 60 * 60 }, // 5 an hour from one address
+  perEmail: { max: 3, windowSeconds: 24 * 60 * 60 }, // 3 a day for one email address
+};
+
 // Password reset codes: asking for a code and trying one are both limited.
 export const resetIpKey = (ip: string) => `reset:ip:${sha(ip)}`;
 export const resetAskKey = (email: string) => `reset:ask:${sha(email.toLowerCase())}`;

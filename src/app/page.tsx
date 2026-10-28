@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ContactAdminForm } from "@/components/contact-admin-form";
 import { NewsSlideshow, type Slide } from "@/components/news-slideshow";
 import { btn, btnGhost, btnSoft, sm } from "@/components/ui";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -49,9 +50,14 @@ export default async function Home() {
           </span>
           mykidzlearning
         </span>
-        <Link href="/admin/login" className={`${btnGhost} ${sm}`}>
-          Admin
-        </Link>
+        <nav className="flex items-center gap-2.5" aria-label="Main">
+          <a href="#contact" className={`${btnGhost} ${sm}`}>
+            Contact admin
+          </a>
+          <Link href="/admin/login" className={`${btnGhost} ${sm}`}>
+            Admin
+          </Link>
+        </nav>
       </header>
 
       <main className="mx-auto max-w-[1100px] px-5 py-5">
@@ -105,6 +111,14 @@ export default async function Home() {
             <p className="mt-2 text-[0.82rem] text-muted">Results as reported by the sources linked; photos and full stories are on those pages. CBSE does not publish an official topper list.</p>
           </section>
         )}
+
+        <section id="contact" className="mt-12 scroll-mt-5 pb-8" aria-labelledby="contact-h">
+          <h2 id="contact-h" className="font-display text-[clamp(1.5rem,4vw,2.2rem)] font-extrabold tracking-tight">Contact the admin</h2>
+          <p className="mb-4 mt-1 max-w-[60ch] text-muted">
+            Need an account, forgot a password, or have a question? Send a message and the admin will reply by email.
+          </p>
+          <ContactAdminForm />
+        </section>
       </main>
     </>
   );
