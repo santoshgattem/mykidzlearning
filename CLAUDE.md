@@ -46,6 +46,14 @@ A disabled parent cannot sign in, and neither can their children.
   A chapter finished at a lower level can be redone at a higher level for the difference in points.
 - Crossing a milestone shows a celebration; parent marks the reward "given".
 
+## JEE practice papers
+
+- Full-length JEE Main style papers, separate from chapter tests: 90 questions (Physics, Chemistry, Maths: 20 multiple-choice + 10 numerical each), 3 hours. +4 right, -1 wrong multiple-choice, 0 wrong numerical. Only the first 5 numerical answers per subject are marked (as in JEE Main), so the maximum is 300.
+- Scopes: Class 11 only, and Class 11 + 12 (Class 12 questions written for the papers only; Class 12 chapters do not exist yet). Papers are original, not copied from official papers.
+- Only PCM and PCMB students. The right answers are never shown. Marks do not change levels or the syllabus percentage.
+- Fixed bonus of 200 points the first time a paper is finished with at least 30 questions answered (`PAPER` in `src/lib/learning.ts`).
+- Load or refresh papers with `npm run seed-papers`; files are in `content/papers/`. Questions and answers are server-only (RLS with no policies).
+
 ## AI grading (server only)
 
 - Route: `POST /api/grade` with `{subject, chapter, level, question, keyIdeas, minWords, answer}`

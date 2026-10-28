@@ -96,7 +96,7 @@ export async function finalizeAttempt(studentId: string, attemptId: string): Pro
   if (a.submitted_at) return a;
 
   const [{ data: qs }, { data: keys }, { data: paper }] = await Promise.all([
-    db.from("paper_questions").select("id, subject, section, grade, chapter").eq("paper_id", a.paper_id),
+    db.from("paper_questions").select("id, position, subject, section, grade, chapter").eq("paper_id", a.paper_id),
     db.from("paper_answers").select("question_id, correct_index, num_answer, num_tolerance, paper_questions!inner(paper_id)").eq("paper_questions.paper_id", a.paper_id),
     db.from("papers").select("title").eq("id", a.paper_id).single(),
   ]);
@@ -105,27 +105,44 @@ export async function finalizeAttempt(studentId: string, attemptId: string): Pro
   const subjects: Record<Subject, Tally> = { phy: blank(), chem: blank(), math: blank() };
   const chapters = new Map<string, Breakdown["chapters"][number]>();
   let answered = 0;
-  for (const q of qs ?? []) {
+  // Numerical questions: only the first PAPER.numMarked answered ones in each subject are marked.
+  const numSeen: Record<Subject, number> = { phy: 0, chem: 0, math: 0 };
+  const ordered = [...(qs ?? [])].sort((x, y) => x.position - y.position);
+  for (const q of ordered) {
     const k = key.get(q.id);
     const given = a.answers[q.id];
-    const s = subjects[q.subject as Subject];
+    const subj = q.subject as Subject;
+    const s = subjects[subj];
     const ck = `${q.subject}|${q.chapter}`;
-    const c = chapters.get(ck) ?? { subject: q.subject as Subject, chapter: q.chapter, grade: q.grade, correct: 0, wrong: 0, skipped: 0, total: 0 };
-    s.total++; c.total++;
-    if (given === undefined || given === null || !k) {
-      s.skipped++; c.skipped++;
-    } else {
-      answered++;
-      const right = q.section === "mcq"
-        ? given === k.correct_index
-        : k.num_answer !== null && Math.abs(Number(given) - Number(k.num_answer)) <= Number(k.num_tolerance) + 1e-12;
-      if (right) { s.correct++; c.correct++; s.marks += PAPER.right; }
-      else {
-        s.wrong++; c.wrong++;
-        if (q.section === "mcq") s.marks += PAPER.wrong; // wrong numerical answers cost nothing
+    const c = chapters.get(ck) ?? { subject: subj, chapter: q.chapter, grade: q.grade, correct: 0, wrong: 0, skipped: 0, total: 0 };
+    chapters.set(ck, c);
+    const has = !(given === undefined || given === null || !k);
+    if (q.section === "num") {
+      if (has) {
+        if (numSeen[subj] >= PAPER.numMarked) continue; // beyond the 5 that count: ignored
+        numSeen[subj]++;
       }
     }
-    chapters.set(ck, c);
+    if (q.section === "mcq" || has) { s.total++; c.total++; }
+    else { c.total++; c.skipped++; } // an unanswered numerical: shown in the chapter table only
+    if (!has) {
+      if (q.section === "mcq") { s.skipped++; c.skipped++; }
+      continue;
+    }
+    answered++;
+    const right = q.section === "mcq"
+      ? given === k!.correct_index
+      : k!.num_answer !== null && Math.abs(Number(given) - Number(k!.num_answer)) <= Number(k!.num_tolerance) + 1e-12;
+    if (right) { s.correct++; c.correct++; s.marks += PAPER.right; }
+    else {
+      s.wrong++; c.wrong++;
+      if (q.section === "mcq") s.marks += PAPER.wrong; // wrong numerical answers cost nothing
+    }
+  }
+  // Numerical slots the student left empty (up to 5 per subject) count as not attempted.
+  for (const sj of Object.keys(subjects) as Subject[]) {
+    subjects[sj].skipped += Math.max(0, PAPER.numMarked - numSeen[sj]);
+    subjects[sj].total = 20 + PAPER.numMarked;
   }
   const all = Object.values(subjects);
   const sum = (f: (t: Tally) => number) => all.reduce((n, t) => n + f(t), 0);

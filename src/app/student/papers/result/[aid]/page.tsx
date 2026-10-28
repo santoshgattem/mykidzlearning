@@ -32,7 +32,7 @@ export default async function PaperResult({ params }: { params: Promise<{ aid: s
       <Link href="/student/papers" className="text-[0.9rem] font-bold">← JEE papers</Link>
       <h2 className="mb-1 mt-4 text-[1.6rem] font-extrabold">{paper?.title ?? "JEE paper"}</h2>
       <p className="text-[0.9rem] text-muted">
-        Finished in {mins(a.started_at, a.submitted_at)} minutes of {PAPER.minutes}.
+        Finished in {mins(a.started_at, a.submitted_at)} {mins(a.started_at, a.submitted_at) === 1 ? "minute" : "minutes"} of {PAPER.minutes}.
       </p>
 
       <div className={`${card} mt-4 text-center`}>

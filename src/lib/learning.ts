@@ -70,6 +70,8 @@ export const PAPER = {
   right: 4,
   wrong: -1,
   maxMarks: 300,
+  // Each subject has 10 numerical questions but only 5 are marked: the first 5 the student answers (as in JEE Main).
+  numMarked: 5,
   minutes: 180,
   graceSeconds: 30,
   // A fixed bonus the first time a paper is finished with at least this many questions answered,

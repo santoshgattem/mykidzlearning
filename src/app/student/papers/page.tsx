@@ -66,7 +66,7 @@ export default async function PapersPage() {
       <Link href="/student" className="text-[0.9rem] font-bold">← Home</Link>
       <h2 className="mb-1 mt-4 text-[1.6rem] font-extrabold">JEE practice papers</h2>
       <p className="text-[0.95rem] text-muted">
-        Full-length papers in the JEE Main pattern: 30 questions each in Physics, Chemistry and Maths (20 multiple-choice and 10 numerical).
+        Full-length papers in the JEE Main pattern: 30 questions each in Physics, Chemistry and Maths: 20 multiple-choice, and 10 numerical of which you attempt any 5.
         Right answer +4, wrong multiple-choice −1, wrong numerical 0. Sit it in one go, in a quiet place, with rough paper.
         Finish a paper for the first time and earn {PAPER.bonus} bonus points.
       </p>

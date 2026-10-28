@@ -40,6 +40,10 @@ export function PaperRunner({ attemptId, paperId, title, questions, initial, dea
   const [error, setError] = useState("");
   const [pending, start] = useTransition();
   const done = useRef(false);
+  // Answers still on their way to the server. Shown to the student and used to hold back the
+  // submit, so nothing is ever lost by closing the tab or submitting too quickly.
+  const inFlight = useRef(0);
+  const [saving, setSaving] = useState(false);
 
   // ---- countdown: the deadline is the server's; the browser only displays it.
   const offset = useRef(Date.now() - serverNow);
@@ -62,6 +66,15 @@ export function PaperRunner({ attemptId, paperId, title, questions, initial, dea
     },
     [attemptId, router],
   );
+
+  // Closing the tab while answers are still being saved asks for confirmation.
+  useEffect(() => {
+    const warn = (e: BeforeUnloadEvent) => {
+      if (inFlight.current > 0 && !done.current) e.preventDefault();
+    };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, []);
 
   useEffect(() => {
     const t = setInterval(() => {
@@ -87,10 +100,18 @@ export function PaperRunner({ attemptId, paperId, title, questions, initial, dea
       else n[id] = v;
       return n;
     });
-    savePaperAnswer(attemptId, id, v).then((ok) => {
-      if (!ok && left() > 30) setError("Couldn’t save that answer. Check your connection.");
-      else if (ok) setError("");
-    });
+    inFlight.current++;
+    setSaving(true);
+    savePaperAnswer(attemptId, id, v)
+      .then((ok) => {
+        if (!ok && left() > 30) setError("Couldn’t save that answer. Check your connection.");
+        else if (ok) setError("");
+      })
+      .catch(() => setError("Couldn’t save that answer. Check your connection."))
+      .finally(() => {
+        inFlight.current--;
+        if (inFlight.current === 0) setSaving(false);
+      });
   };
 
   // Numerical answers are saved shortly after typing stops.
@@ -106,13 +127,20 @@ export function PaperRunner({ attemptId, paperId, title, questions, initial, dea
     }, 500);
   };
 
+  // Numerical answers given in the current subject. Only the first 5 are marked, as in JEE Main.
+  const NUM_MARKED = 5;
+  const numDone = (subject: string) => questions.filter((x) => x.subject === subject && x.section === "num" && answers[x.id] !== undefined).length;
+  const overNum = SUBJECTS.filter((x) => numDone(x.id) > NUM_MARKED);
+
   const subjectStart = (s: string) => questions.findIndex((x) => x.subject === s);
   const low = secs <= 600;
 
   return (
     <div>
       <div className="sticky top-0 z-10 -mx-5 mb-3 flex flex-wrap items-center justify-between gap-2 border-b-2 border-line bg-bg px-5 py-2.5">
-        <b className="text-[0.95rem]">{title}</b>
+        <b className="text-[0.95rem]">
+          {title} <span className="ml-2 text-[0.8rem] font-semibold text-muted">{saving ? "Saving…" : "All answers saved"}</span>
+        </b>
         <span className={`font-display text-[1.3rem] font-extrabold tabular-nums ${low ? "text-bad" : ""}`} aria-live="off" role="timer">
           ⏱ {hms(secs)}
         </span>
@@ -174,6 +202,10 @@ export function PaperRunner({ attemptId, paperId, title, questions, initial, dea
                 placeholder="e.g. 12 or 0.25"
               />
               <p className="mt-1 text-[0.82rem] text-muted">Give the value as asked. Round only if the question says so.</p>
+              <p className={`mt-1 text-[0.85rem] font-bold ${numDone(q.subject) > NUM_MARKED ? "text-bad" : ""}`}>
+                Attempt any {NUM_MARKED} of the 10 numerical questions in this subject. Answered so far: {numDone(q.subject)}.
+                {numDone(q.subject) > NUM_MARKED && " Only your first 5 answers will be marked."}
+              </p>
             </div>
           )}
 
@@ -237,6 +269,11 @@ export function PaperRunner({ attemptId, paperId, title, questions, initial, dea
               You have answered <b>{counts.answered}</b> of {questions.length}. <b>{counts.left}</b> are unanswered
               {counts.marked ? `, and ${counts.marked} marked for review` : ""}. You cannot change anything after you submit.
             </p>
+            {overNum.length > 0 && (
+              <p className="mt-2 font-bold text-bad">
+                In {overNum.map((x) => x.name).join(" and ")} you answered more than {NUM_MARKED} numerical questions. Only the first {NUM_MARKED} you answered (in question order) will be marked.
+              </p>
+            )}
             <div className="mt-4 flex flex-wrap gap-2.5">
               <button className={btn} disabled={pending} onClick={() => submit(false)}>
                 {pending ? "Marking…" : "Yes, submit"}
