@@ -67,21 +67,79 @@ Search results for each chapter, picked for full NCERT coverage in English. Pare
 | e17 | [Note Making and Summary Writing Class 11](https://www.youtube.com/watch?v=w48K7urM4UI) | Next Toppers - 11th Science |
 | e18 | [11th English Writing Skills One Shot](https://www.youtube.com/watch?v=gXAj-geuheg) | Pradeep Giri 11th and 12th Academy |
 
+## Class 3 (added 2026-10-29)
 
-## Class 3 Maths (added 2026-10-29)
+Short, child-friendly lessons from YouTube search results, matched to each chapter's topic. Parents can replace any of them in the Video links tab.
 
-Short, child-friendly lessons from YouTube search results. Parents can replace any of them in the Video links tab.
+### Maths (Manthan)
 
 | Chapter | Video title | Channel |
 |---|---|---|
-| m3-1 | [Place Value to 1,000 | Grade 3 Math Lesson 1](https://www.youtube.com/watch?v=5sEuLTY-dnI) | Reaby - The Learning Lab |
-| m3-2 | [3-Digit Addition Practice](https://www.youtube.com/watch?v=no8sKeQ9eio) | Elementary Math with Mr. J |
-| m3-3 | [3-Digit Subtraction with Regrouping - 3rd Grade](https://www.youtube.com/watch?v=8_X680JiWDc) | Underwater Math |
-| m3-4 | [Multiplication 3rd Grade](https://www.youtube.com/watch?v=LD4zp8ruvaI) | Math & Learning Videos 4 Kids |
-| m3-5 | [3rd Grade Division Strategies](https://www.youtube.com/watch?v=poSGmCrvL6w) | Longhorn Learners |
-| m3-6 | [Introduction to Fractions. Grade 3](https://www.youtube.com/watch?v=CG-yfc8Mv5I) | MATH-N-ROLL |
-| m3-7 | [Money - Purchases and Bill | Mathematics Grade 3](https://www.youtube.com/watch?v=8XpEQMgIJHQ) | Periwinkle |
-| m3-8 | [Telling the Time for Kids: O'Clock Times](https://www.youtube.com/watch?v=xdR7s8mwyp8) | Learn and Play Online! |
-| m3-9 | [Measurement for Kids | Length, Mass, Capacity](https://www.youtube.com/watch?v=-7FnuAhnAHw) | VOLT Learning |
-| m3-10 | [Shapes! | Mini Math Movies](https://www.youtube.com/watch?v=Ux_kLd7qAcY) | Scratch Garden |
-| m3-11 | [Even and Odd Numbers - Math for Kids](https://www.youtube.com/watch?v=eF_FxSW8QwY) | Smile and Learn - English |
+| m3-1 | [Numbers up to 999 (Year 3 lesson)](https://www.youtube.com/watch?v=Ls61GkxVv9M) | MathsOnline |
+| m3-2 | [Solid Shapes for Kids: cube, cuboid, cylinder, cone and sphere](https://www.youtube.com/watch?v=F-YKdbnA1hY) | The Online Teacher |
+| m3-3 | [Place Value for Kids](https://www.youtube.com/watch?v=Ju3kQjmcH5g) | Learn Bright |
+| m3-4 | [Adding and Subtracting Two Digit Numbers](https://www.youtube.com/watch?v=QRqM1rQX0yM) | KIPEDU |
+| m3-5 | [Sides and Corners of 2D Shapes](https://www.youtube.com/watch?v=apAmQCzjmtE) | Noodle Kidz |
+| m3-6 | [Place Value | Expanded, Word, and Standard Form Song](https://www.youtube.com/watch?v=qeAVXeETETI) | Numberock |
+| m3-7 | [Relationship Between Multiplication And Division | Grade 3](https://www.youtube.com/watch?v=tER-YslAY-8) | Periwinkle |
+| m3-8 | [Fractions for Kids: Halves and Quarters](https://www.youtube.com/watch?v=akxO8eNSXJ8) | Learn and Play Online! |
+| m3-9 | [Round Up And Down To The Nearest 10 Or 100 | Grade 3](https://www.youtube.com/watch?v=VPdE5aOH52g) | Kids Academy |
+| m3-10 | [Measuring! | Mini Math Movies](https://www.youtube.com/watch?v=2wUsdsae0ro) | Scratch Garden |
+| m3-11 | [Litres and Millilitres | Mathematics Grade 3](https://www.youtube.com/watch?v=b3rcIj-geuY) | Periwinkle |
+| m3-12 | [Addition and Subtraction Within 1000 - 3rd Grade](https://www.youtube.com/watch?v=_LSm64DwFC4) | Boddle Learning |
+| m3-13 | [Telling the Time for Kids](https://www.youtube.com/watch?v=xdR7s8mwyp8) | Learn and Play Online! |
+| m3-14 | [Symmetry for Kids](https://www.youtube.com/watch?v=1u57rNNxDHg) | Homeschool Pop |
+
+### EVS (New Science in Everyday Life)
+
+| Chapter | Video title | Channel |
+|---|---|---|
+| e3-1 | [Herbivores | Carnivores | Omnivores](https://www.youtube.com/watch?v=bjnquo_BZ_Y) | learning junction |
+| e3-2 | [Safety rules for kids | Safety on road | Safety at home](https://www.youtube.com/watch?v=Rt1h0jcXgGA) | Educational Videos |
+| e3-3 | [Different Types Of Houses](https://www.youtube.com/watch?v=4yRye0g2OHA) | Periwinkle |
+| e3-4 | [Types of Soil | Science for Kids](https://www.youtube.com/watch?v=evlMlKCOKPM) | Little School |
+| e3-5 | [Three States of Matter - Solids, Liquids And Gases | Grade 3](https://www.youtube.com/watch?v=GsUftZBXs7s) | Periwinkle |
+| e3-6 | [Living & Non Living Things](https://www.youtube.com/watch?v=za5z6WRz29I) | Peekaboo Kidz |
+| e3-7 | [Parts of a Plant | Science For Grade 3 Kids](https://www.youtube.com/watch?v=IanRksy6-zI) | Periwinkle |
+| e3-8 | [Birds (Beaks / Nests / Claws / Food) | Class 3 Science](https://www.youtube.com/watch?v=ngsO5iQtVN4) | Orchids eLearning |
+| e3-9 | [The Five Senses](https://www.youtube.com/watch?v=q1xNuU7gaAQ) | Peekaboo Kidz |
+| e3-10 | [Units of Measurement | Science Grade 3](https://www.youtube.com/watch?v=Z0CcUyFzeZ4) | Periwinkle |
+| e3-11 | [Light, Sound and Force | Class 3 Science](https://www.youtube.com/watch?v=Xc6yBPs1TXo) | Orchids eLearning |
+| e3-12 | [The Water Cycle](https://www.youtube.com/watch?v=ncORPosDrjI) | Peekaboo Kidz |
+| e3-13 | [The Sun, Moon, and Stars | Class 3 Science](https://www.youtube.com/watch?v=j4HuzRH-VMU) | Orchids eLearning |
+| e3-14 | [Seven Continents of the World](https://www.youtube.com/watch?v=-84U1EsZCbY) | Peekaboo Kidz |
+
+### English (Communicate with Cambridge)
+
+| Chapter | Video title | Channel |
+|---|---|---|
+| en3-1 | [Nouns - Common And Proper | Grade 3](https://www.youtube.com/watch?v=DJy4PV6kETM) | Periwinkle |
+| en3-2 | [Singular & Plural Nouns](https://www.youtube.com/watch?v=L4B7XxuJO6A) | Ellii |
+| en3-3 | [Degrees of Comparison](https://www.youtube.com/watch?v=mY7mkNr43DA) | Tutoring Hour |
+| en3-4 | [Simple Verb Tenses (Past, Present, Future)](https://www.youtube.com/watch?v=4Rm9l6y3-WY) | Mind Blooming |
+| en3-5 | [Personal Pronouns | Grade 3](https://www.youtube.com/watch?v=CYXDr_vHiik) | Periwinkle |
+| en3-6 | [Past, Present, and Future Verb Tenses](https://www.youtube.com/watch?v=0lH6x_3MSeM) | Margaret Stewart |
+| en3-7 | [Prepositions for Kids](https://www.youtube.com/watch?v=M61BmcxQ_tE) | Learn and Play Online! |
+| en3-8 | [Wh- Questions](https://www.youtube.com/watch?v=x_4AjSwTXdc) | Ellii |
+| en3-9 | [What Is an Adverb? for Kids](https://www.youtube.com/watch?v=2O4ckpd_UjE) | Learn Bright |
+| en3-10 | [Conjunctions | Grade 3](https://www.youtube.com/watch?v=cZj-2mP_n5Y) | Fun For Kids Learning Channel |
+
+### Hindi (Madhup)
+
+| Chapter | Video title | Channel |
+|---|---|---|
+| h3-1 | [पर्यायवाची शब्द | Hindi Grammar Class 3](https://www.youtube.com/watch?v=4NsK6oruRVY) | Blueprint Digital |
+| h3-2 | [विलोम शब्द | opposite words in Hindi](https://www.youtube.com/watch?v=ZG2cZaNTeFU) | Toppo Kids |
+| h3-3 | [वचन | Number | Hindi Grammar Class 3](https://www.youtube.com/watch?v=lAxQaKTV-h8) | Blueprint Digital |
+| h3-4 | [वर्ण विच्छेद | Hindi Grammar](https://www.youtube.com/watch?v=FL-k3a4vBT4) | Study Centre |
+| h3-5 | [क्रिया | Hindi Grammar Class 3](https://www.youtube.com/watch?v=Jxx7hHcKVSo) | Blueprint Digital |
+| h3-6 | [विराम चिह्न | Punctuation Marks | Class 3](https://www.youtube.com/watch?v=c2khjQi1Mq0) | Blueprint Digital |
+| h3-7 | [लिंग | Gender | Hindi Vyakaran Class 3](https://www.youtube.com/watch?v=o9wCfD6LUM0) | Blueprint Digital |
+| h3-8 | [विलोम शब्द | opposite words](https://www.youtube.com/watch?v=J82UdyMLyJU) | Champs valley Education |
+| h3-9 | [अनुस्वार, अनुनासिक और नुक्ता | Class 3](https://www.youtube.com/watch?v=HlNlFPSOljg) | Zoom Publishers |
+| h3-10 | [Class 3 Ling Parivartan Hindi Vyakaran](https://www.youtube.com/watch?v=46N22v8pUlo) | Learning Notebook |
+| h3-11 | [एक शब्द के लिए अनेक शब्द | कक्षा 3](https://www.youtube.com/watch?v=5xxO40DjG3M) | Blueprint Digital |
+| h3-12 | [पत्र लेखन | कक्षा 3](https://www.youtube.com/watch?v=XlAAeCNWXCU) | Blueprint Digital |
+| h3-13 | [भाववाचक संज्ञा](https://www.youtube.com/watch?v=A4Zpugbrmzs) | Learn Easy |
+| h3-14 | [तुकांत शब्द | Rhyming words in Hindi](https://www.youtube.com/watch?v=yRwi-tn6Wzc) | Schooly Shiksha |
+

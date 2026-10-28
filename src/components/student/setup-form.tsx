@@ -53,7 +53,7 @@ export function SetupForm({ name, grade: g0, group: gr0 }: { name: string; grade
       {grade === 3 && (
         <div>
           <span className={label}>Your subjects</span>
-          <p className="text-[0.95rem]">{GROUPS.C3.map((x) => SUBJECT_LABEL[x]).join(", ")}</p>
+          <p className="text-[0.95rem]">{GROUPS.C3.filter((x) => x !== "c3-tel").map((x) => SUBJECT_LABEL[x]).join(", ")} (Telugu coming soon)</p>
         </div>
       )}
       {grade !== 3 && (

@@ -56,10 +56,10 @@ A disabled parent cannot sign in, and neither can their children.
 
 ## Class 3 (CBSE)
 
-- A younger child can be a Class 3 student: they pick "Class 3" in set-up (group code `C3`, no PCM/PCB choice). Subjects: Telugu, English, Maths, EVS, Hindi (ids `c3-tel`, `c3-eng`, `c3-math`, `c3-evs`, `c3-hin`). Only the subjects that have been loaded appear.
+- A younger child can be a Class 3 student: they pick "Class 3" in set-up (group code `C3`, no PCM/PCB choice). Subjects: Telugu (coming soon), English, Maths, EVS, Hindi (ids `c3-tel`, `c3-eng`, `c3-math`, `c3-evs`, `c3-hin`). Only the subjects that have been loaded appear. Chapters follow the school's books: Maths "Manthan" (14), EVS "New Science in Everyday Life" (14), English "Communicate with Cambridge" Level 3 (10 units; questions follow each unit's grammar, vocabulary and writing skills, with story questions only for Aladdin, Alice and Mowgli), Hindi "Madhup Hindi Pathmala" (14 lessons; grammar-based).
 - Test = 5 multiple-choice + 5 fill-in + 5 one-line answers, relaxed 20-minute timer, in `src/lib/kidtest.ts`. One-line answers are stored as `written` questions and marked by one AI call per try (`aiGradeKid`), with a key-word fallback. Same 100%-only marking, locking of right answers, points and reward road as Class 11.
 - Level names are gentler (Explorer, Adventurer, Champion, Super Star) with the same 25/50/75% steps and multipliers.
-- No JEE papers for Class 3. Content is in `content/class3/`; load with `npm run seed-class3` (`-- --only c3-math`, `--dry`). Chapters are topic-based and book-independent until the school's syllabus is supplied.
+- No JEE papers for Class 3. Content is in `content/class3/`; load with `npm run seed-class3` (`-- --only c3-math`, `--dry`, `--force` to replace).
 
 ## AI grading (server only)
 
