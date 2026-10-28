@@ -54,6 +54,13 @@ A disabled parent cannot sign in, and neither can their children.
 - Fixed bonus of 200 points the first time a paper is finished with at least 30 questions answered (`PAPER` in `src/lib/learning.ts`).
 - Load or refresh papers with `npm run seed-papers`; files are in `content/papers/`. Questions and answers are server-only (RLS with no policies).
 
+## Class 3 (CBSE)
+
+- A younger child can be a Class 3 student: they pick "Class 3" in set-up (group code `C3`, no PCM/PCB choice). Subjects: Telugu, English, Maths, EVS, Hindi (ids `c3-tel`, `c3-eng`, `c3-math`, `c3-evs`, `c3-hin`). Only the subjects that have been loaded appear.
+- Test = 5 multiple-choice + 5 fill-in + 5 one-line answers, relaxed 20-minute timer, in `src/lib/kidtest.ts`. One-line answers are stored as `written` questions and marked by one AI call per try (`aiGradeKid`), with a key-word fallback. Same 100%-only marking, locking of right answers, points and reward road as Class 11.
+- Level names are gentler (Explorer, Adventurer, Champion, Super Star) with the same 25/50/75% steps and multipliers.
+- No JEE papers for Class 3. Content is in `content/class3/`; load with `npm run seed-class3` (`-- --only c3-math`, `--dry`). Chapters are topic-based and book-independent until the school's syllabus is supplied.
+
 ## AI grading (server only)
 
 - Route: `POST /api/grade` with `{subject, chapter, level, question, keyIdeas, minWords, answer}`

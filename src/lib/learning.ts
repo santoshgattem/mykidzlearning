@@ -25,8 +25,27 @@ export const GROUPS = {
   PCM: ["phy", "chem", "math", "eng"],
   PCB: ["phy", "chem", "bio", "eng"],
   PCMB: ["phy", "chem", "math", "bio", "eng"],
+  // Class 3 (CBSE): no group choice, every subject. Subject ids start with c3-.
+  C3: ["c3-tel", "c3-eng", "c3-math", "c3-evs", "c3-hin"],
 } as const;
 export type Group = keyof typeof GROUPS;
+// The groups a Class 11 student can pick.
+export const SENIOR_GROUPS = ["PCM", "PCB", "PCMB"] as const;
+
+// ---- Class 3
+// Same points, same reward road, same 25/50/75% steps. Only the level names are gentler.
+export const KID_GRADE = 3;
+export const isKid = (grade: number | null | undefined) => grade === KID_GRADE;
+export const KID_LEVELS = {
+  1: { n: "Explorer", d: "Easy", x: 1 },
+  2: { n: "Adventurer", d: "Medium", x: 1.5 },
+  3: { n: "Champion", d: "Tricky", x: 2 },
+  4: { n: "Super Star", d: "Challenge", x: 3 },
+} as const;
+export const levelsFor = (grade: number | null | undefined) => (isKid(grade) ? KID_LEVELS : LEVELS);
+export const levelName = (grade: number | null | undefined, l: Level) => levelsFor(grade)[l].n;
+// 5 multiple-choice, 5 fill-in-the-blanks and 5 one-line answers; a relaxed 20 minutes per try.
+export const KID_TEST = { mcq: 5, fib: 5, short: 5, seconds: 20 * 60 } as const;
 
 export const DEFAULT_CHANNEL = "Physics Wallah";
 

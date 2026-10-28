@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { btn, btnSoft } from "@/components/ui";
-import { fmt } from "@/lib/learning";
+import { fmt, levelName } from "@/lib/learning";
 import { getStudentContext } from "@/lib/student";
 import { latestResult } from "@/lib/test";
 
@@ -22,7 +22,7 @@ export default async function ResultPage({ params }: { params: Promise<{ cid: st
       <section className="road mt-4 rounded-[28px] p-6">
         <div className="font-display text-[clamp(2.4rem,8vw,3.6rem)] font-extrabold leading-none">100% 🎉</div>
         <h2 className="mt-2.5 text-[1.6rem] font-extrabold text-white">
-          {chapter.title} complete at {r.levelName} level
+          {chapter.title} complete at {levelName(ctx.grade, r.level)} level
         </h2>
         <p className="mt-2">
           {r.tries === 1
@@ -35,7 +35,7 @@ export default async function ResultPage({ params }: { params: Promise<{ cid: st
       </section>
       {r.feedback && (
         <div className="mt-4 rounded-[22px] border-2 border-line bg-surface p-5">
-          <b>Feedback on your written answer</b>
+          <b>{ctx.grade === 3 ? "Your teacher says" : "Feedback on your written answer"}</b>
           <p className="mt-1.5">{r.feedback}</p>
         </div>
       )}

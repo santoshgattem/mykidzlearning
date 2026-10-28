@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { Medal, RewardRoad } from "@/components/student/reward-road";
 import { btnGhost, card, sm } from "@/components/ui";
-import { fmt, LEVELS, levelPoints, PTS, TIERS, type Level } from "@/lib/learning";
+import { fmt, levelPoints, levelsFor, PTS, TIERS, type Level } from "@/lib/learning";
 import { getStudentContext } from "@/lib/student";
 
 export default async function RewardsPage() {
   const ctx = await getStudentContext();
+  const LEVELS = levelsFor(ctx.grade);
 
   return (
     <>

@@ -8,7 +8,7 @@ import { signOut } from "@/app/actions/auth";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { DEFAULT_CHANNEL, fmt, GROUPS, LEVELS, levelForPct, PTS, syllabusPct, TIERS, type Tier } from "@/lib/learning";
+import { DEFAULT_CHANNEL, fmt, GROUPS, levelsFor, levelForPct, PTS, syllabusPct, TIERS, type Tier } from "@/lib/learning";
 
 type SearchParams = Promise<{ kid?: string; tab?: string }>;
 
@@ -51,6 +51,7 @@ export default async function ParentPage({ searchParams }: { searchParams: Searc
 
   const adding = tabParam === "add";
   const kid = kids.find((k) => k.id === kidParam) ?? kids[0];
+  const LEVELS = levelsFor(kid?.grade);
   const tab = TABS.some(([id]) => id === tabParam) ? tabParam! : "overview";
 
   const chips = (

@@ -2,13 +2,15 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { NotebookButton, StartTestButton, WatchStep } from "@/components/student/chapter-actions";
 import { btnGhost, card, sm, Tag } from "@/components/ui";
-import { LEVELS, levelPoints, PTS, TEST, type Level } from "@/lib/learning";
+import { KID_TEST, isKid, levelPoints, levelsFor, PTS, TEST, type Level } from "@/lib/learning";
 import { createClient } from "@/lib/supabase/server";
 import { getStudentContext } from "@/lib/student";
 
 export default async function ChapterPage({ params }: { params: Promise<{ cid: string }> }) {
   const { cid } = await params;
   const ctx = await getStudentContext();
+  const LEVELS = levelsFor(ctx.grade);
+  const kid = isKid(ctx.grade);
   const chapter = ctx.chapters.find((c) => c.id === cid);
   if (!chapter) notFound();
   if (!ctx.unlocked(chapter)) redirect(`/student/subject/${chapter.subject_id}`);
@@ -67,7 +69,9 @@ export default async function ChapterPage({ params }: { params: Promise<{ cid: s
           <div className="flex flex-1 flex-col gap-3.5">
             <h3 className="text-[1.15rem] font-bold">Take the test</h3>
             <p className="text-[0.88rem] text-muted">
-              {TEST.mcq} MCQs, {TEST.fib} fill in the blanks and a written answer at <b>{LEVELS[ctx.level].n}</b> level. Get every answer right to complete the chapter: {here} points. Wrong answers? Revise and fix just those.
+              {kid
+                ? `${KID_TEST.mcq} pick-the-answer questions, ${KID_TEST.fib} fill in the blanks and ${KID_TEST.short} one-line answers`
+                : `${TEST.mcq} MCQs, ${TEST.fib} fill in the blanks and a written answer`}{" "}at <b>{LEVELS[ctx.level].n}</b> level. Get every answer right to complete the chapter: {here} points. Wrong answers? Revise and fix just those.
               {done != null
                 ? levelUp
                   ? ` You completed this at ${LEVELS[done as Level].n} level. Redo it at your new level for +${here - (p?.completed_points ?? 0)} more points.`

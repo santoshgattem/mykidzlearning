@@ -34,7 +34,7 @@ export default async function StudentHome({ searchParams }: { searchParams: Prom
           See all rewards and how to earn
         </Link>
       </RewardRoad>
-      <LevelCard pct={ctx.pct} level={ctx.level} />
+      <LevelCard pct={ctx.pct} level={ctx.level} grade={ctx.grade} />
 
       <div className={`${card} mt-4`}>
         <div className="flex items-center justify-between gap-3">
@@ -87,7 +87,7 @@ export default async function StudentHome({ searchParams }: { searchParams: Prom
       <div className="mb-3 mt-7 flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-[1.6rem] font-extrabold">Your subjects</h2>
         <Link href="/student?setup=1" className={`${btnGhost} ${sm}`}>
-          Class {ctx.grade}, {ctx.group}: change
+          {ctx.grade === 3 ? "Class 3" : `Class ${ctx.grade}, ${ctx.group}`}: change
         </Link>
       </div>
       <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">

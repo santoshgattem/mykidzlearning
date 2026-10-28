@@ -1,7 +1,8 @@
 import { card } from "@/components/ui";
-import { LEVELS, type Level } from "@/lib/learning";
+import { levelsFor, type Level } from "@/lib/learning";
 
-export function LevelCard({ pct, level }: { pct: number; level: Level }) {
+export function LevelCard({ pct, level, grade }: { pct: number; level: Level; grade?: number | null }) {
+  const LEVELS = levelsFor(grade);
   const next = [25, 50, 75].find((x) => pct < x);
   return (
     <section className={`${card} mt-4`}>

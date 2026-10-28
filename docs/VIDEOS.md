@@ -66,3 +66,22 @@ Search results for each chapter, picked for full NCERT coverage in English. Pare
 | e16 | [The Tale of the Melon City Class 11 English](https://www.youtube.com/watch?v=bSUp338R3vk) | Magnet Brains |
 | e17 | [Note Making and Summary Writing Class 11](https://www.youtube.com/watch?v=w48K7urM4UI) | Next Toppers - 11th Science |
 | e18 | [11th English Writing Skills One Shot](https://www.youtube.com/watch?v=gXAj-geuheg) | Pradeep Giri 11th and 12th Academy |
+
+
+## Class 3 Maths (added 2026-10-29)
+
+Short, child-friendly lessons from YouTube search results. Parents can replace any of them in the Video links tab.
+
+| Chapter | Video title | Channel |
+|---|---|---|
+| m3-1 | [Place Value to 1,000 | Grade 3 Math Lesson 1](https://www.youtube.com/watch?v=5sEuLTY-dnI) | Reaby - The Learning Lab |
+| m3-2 | [3-Digit Addition Practice](https://www.youtube.com/watch?v=no8sKeQ9eio) | Elementary Math with Mr. J |
+| m3-3 | [3-Digit Subtraction with Regrouping - 3rd Grade](https://www.youtube.com/watch?v=8_X680JiWDc) | Underwater Math |
+| m3-4 | [Multiplication 3rd Grade](https://www.youtube.com/watch?v=LD4zp8ruvaI) | Math & Learning Videos 4 Kids |
+| m3-5 | [3rd Grade Division Strategies](https://www.youtube.com/watch?v=poSGmCrvL6w) | Longhorn Learners |
+| m3-6 | [Introduction to Fractions. Grade 3](https://www.youtube.com/watch?v=CG-yfc8Mv5I) | MATH-N-ROLL |
+| m3-7 | [Money - Purchases and Bill | Mathematics Grade 3](https://www.youtube.com/watch?v=8XpEQMgIJHQ) | Periwinkle |
+| m3-8 | [Telling the Time for Kids: O'Clock Times](https://www.youtube.com/watch?v=xdR7s8mwyp8) | Learn and Play Online! |
+| m3-9 | [Measurement for Kids | Length, Mass, Capacity](https://www.youtube.com/watch?v=-7FnuAhnAHw) | VOLT Learning |
+| m3-10 | [Shapes! | Mini Math Movies](https://www.youtube.com/watch?v=Ux_kLd7qAcY) | Scratch Garden |
+| m3-11 | [Even and Odd Numbers - Math for Kids](https://www.youtube.com/watch?v=eF_FxSW8QwY) | Smile and Learn - English |

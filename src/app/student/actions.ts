@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentUser } from "@/lib/auth";
-import { GROUPS, PTS, type Group } from "@/lib/learning";
+import { GROUPS, PTS, SENIOR_GROUPS, isKid, type Group } from "@/lib/learning";
+import { ensureKidSession, submitKidAnswers, type KidAnswers, type KidOutcome } from "@/lib/kidtest";
 import { ensureSession, submitAnswers, type Answers, type SubmitOutcome } from "@/lib/test";
 import { getStudentContext } from "@/lib/student";
 
@@ -31,11 +32,13 @@ async function chapterFor(chapterId: string) {
 // ---------------------------------------------------------------- class and group
 export async function saveSetup(grade: number, group: string): Promise<Result> {
   const user = await requireStudent();
-  if (grade !== 11) return fail("Class 12 is coming soon.");
-  if (!(group in GROUPS)) return fail("Choose a group.");
+  if (grade !== 11 && grade !== 3) return fail("Class 12 is coming soon.");
+  // Class 3 has no group to choose: it is always C3. Class 11 picks PCM, PCB or PCMB.
+  const grp = (grade === 3 ? "C3" : group) as Group;
+  if (grade === 11 && !(SENIOR_GROUPS as readonly string[]).includes(grp)) return fail("Choose a group.");
   const { error } = await createAdminClient()
     .from("students")
-    .update({ grade, grp: group as Group })
+    .update({ grade, grp })
     .eq("id", user.id);
   if (error) return fail("Couldn’t save. Try again.");
   refresh();
@@ -96,7 +99,8 @@ export async function startTest(chapterId: string): Promise<Result> {
   if (!chapter) return fail("This chapter isn’t open yet.");
   if (!ctx.progressMap.get(chapterId)?.watched_at) return fail("Watch the lesson first. The test unlocks after the video.");
   try {
-    await ensureSession(user.id, chapterId, ctx.level);
+    if (isKid(ctx.grade)) await ensureKidSession(user.id, chapterId, ctx.level);
+    else await ensureSession(user.id, chapterId, ctx.level);
   } catch (e) {
     return fail(e instanceof Error ? e.message : "Couldn’t start the test.");
   }
@@ -109,6 +113,16 @@ export async function submitTest(chapterId: string, answers: Answers): Promise<S
   const { chapter } = await chapterFor(chapterId);
   if (!chapter) return { status: "error", error: "This chapter isn’t open yet." };
   const outcome = await submitAnswers(user.id, chapterId, answers);
+  if (outcome.status === "done") refresh();
+  return outcome;
+}
+
+// Class 3: 5 multiple-choice, 5 fill-in-the-blanks, 5 one-line answers.
+export async function submitKidTest(chapterId: string, answers: KidAnswers): Promise<KidOutcome> {
+  const user = await requireStudent();
+  const { ctx, chapter } = await chapterFor(chapterId);
+  if (!chapter || !isKid(ctx.grade)) return { status: "error", error: "This chapter isn’t open yet." };
+  const outcome = await submitKidAnswers(user.id, chapterId, answers);
   if (outcome.status === "done") refresh();
   return outcome;
 }

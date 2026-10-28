@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { btnGhost, sm } from "@/components/ui";
-import { LEVELS, type Level } from "@/lib/learning";
+import { levelsFor, type Level } from "@/lib/learning";
 import { getStudentContext } from "@/lib/student";
 
 export default async function SubjectPage({ params }: { params: Promise<{ sid: string }> }) {
   const { sid } = await params;
   const ctx = await getStudentContext();
+  const LEVELS = levelsFor(ctx.grade);
   const subject = ctx.subjects.find((s) => s.id === sid);
   if (!subject) notFound();
   const chapters = ctx.chaptersOf(sid);

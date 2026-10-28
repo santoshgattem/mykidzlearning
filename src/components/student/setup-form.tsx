@@ -4,13 +4,19 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { saveSetup } from "@/app/student/actions";
 import { btn, btnSoft, card, errorText, label } from "@/components/ui";
-import { GROUPS, type Group } from "@/lib/learning";
+import { GROUPS, SENIOR_GROUPS, type Group } from "@/lib/learning";
 
 const SUBJECT_LABEL: Record<string, string> = {
   phy: "⚡ Physics",
   chem: "🧪 Chemistry",
   math: "📐 Mathematics",
   bio: "🧬 Biology",
+  eng: "📖 English",
+  "c3-tel": "🌺 Telugu",
+  "c3-eng": "📖 English",
+  "c3-math": "🔢 Maths",
+  "c3-evs": "🌳 EVS",
+  "c3-hin": "🪔 Hindi",
 };
 
 export function SetupForm({ name, grade: g0, group: gr0 }: { name: string; grade: number | null; group: Group | null }) {
@@ -26,12 +32,16 @@ export function SetupForm({ name, grade: g0, group: gr0 }: { name: string; grade
       <div>
         <span className={label}>Your class</span>
         <div className="flex flex-wrap gap-3">
-          {[11, 12].map((c) => (
+          {[3, 11, 12].map((c) => (
             <button
               key={c}
               disabled={c === 12}
               aria-pressed={grade === c}
-              onClick={() => setGrade(c)}
+              onClick={() => {
+                setGrade(c);
+                if (c === 3) setGroup("C3");
+                else if (group === "C3") setGroup(null);
+              }}
               className={`${grade === c ? btn : btnSoft}`}
             >
               Class {c}
@@ -40,10 +50,17 @@ export function SetupForm({ name, grade: g0, group: gr0 }: { name: string; grade
           ))}
         </div>
       </div>
+      {grade === 3 && (
+        <div>
+          <span className={label}>Your subjects</span>
+          <p className="text-[0.95rem]">{GROUPS.C3.map((x) => SUBJECT_LABEL[x]).join(", ")}</p>
+        </div>
+      )}
+      {grade !== 3 && (
       <div>
         <span className={label}>Your group</span>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
-          {(Object.keys(GROUPS) as Group[]).map((id) => (
+          {([...SENIOR_GROUPS] as Group[]).map((id) => (
             <button
               key={id}
               aria-pressed={group === id}
@@ -56,6 +73,7 @@ export function SetupForm({ name, grade: g0, group: gr0 }: { name: string; grade
           ))}
         </div>
       </div>
+      )}
       <div role="alert" className={errorText}>
         {error}
       </div>
