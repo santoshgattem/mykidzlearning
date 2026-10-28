@@ -93,7 +93,7 @@ A disabled parent cannot sign in, and neither can their children.
 
 ## Home page: "Be inspired" slideshow
 
-- A rotating slideshow of real results from past years (IIT JEE, CBSE, NEET) with a source link on every slide, in `src/components/news-slideshow.tsx`. Items live in `news_items` (server-only) and are managed in the admin portal's News tab; starter items are in `content/news.mjs` (`npm run seed-news`, safe to re-run). CBSE publishes no official topper list, so CBSE toppers must be labelled as media reports. Only http(s) source links are accepted. Names are optional.
+- A rotating slideshow of real results from past years (IIT JEE, CBSE, NEET) with a source link on every slide, in `src/components/news-slideshow.tsx`. Items live in `news_items` (server-only) and are managed in the admin portal's News tab; starter items are in `content/news.mjs` (`npm run seed-news`, safe to re-run). CBSE publishes no official topper list, so CBSE toppers must be labelled as media reports. Only http(s) source links are accepted. Names are optional. No student photos are shown or stored on our site: each slide links to the original article, where any photo appears.
 
 ## Design
 

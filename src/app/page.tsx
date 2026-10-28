@@ -103,7 +103,7 @@ export default async function Home() {
             <h2 id="inspire" className="font-display text-[clamp(1.5rem,4vw,2.2rem)] font-extrabold tracking-tight">Be inspired</h2>
             <p className="mb-4 mt-1 max-w-[60ch] text-muted">Real results from past years. Every one of them began with one chapter at a time.</p>
             <NewsSlideshow slides={slides} />
-            <p className="mt-2 text-[0.82rem] text-muted">Results as reported by the sources linked. CBSE does not publish an official topper list.</p>
+            <p className="mt-2 text-[0.82rem] text-muted">Results as reported by the sources linked; photos and full stories are on those pages. CBSE does not publish an official topper list.</p>
           </section>
         )}
       </main>

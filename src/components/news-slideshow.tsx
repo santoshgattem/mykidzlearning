@@ -71,7 +71,7 @@ export function NewsSlideshow({ slides }: { slides: Slide[] }) {
             <h3 className="mt-3 text-[1.25rem] font-extrabold">{s.title}</h3>
             <p className="mt-1.5 max-w-[60ch] text-muted">{s.body}</p>
             <a href={s.sourceUrl} target="_blank" rel="noopener noreferrer nofollow" tabIndex={k === i ? 0 : -1} className="mt-3 inline-block text-[0.88rem] font-bold">
-              Source: {s.sourceName} ↗
+              Read the full story, with photos, at {s.sourceName} ↗
             </a>
           </article>
         ))}
