@@ -64,3 +64,16 @@ export const fmt = (n: number) => n.toLocaleString("en-IN");
 // Weekly habit: tests passed at 100% each Monday-Sunday (India time). Below this by Saturday
 // evening, the student and the parent get a reminder email.
 export const WEEKLY_TARGET = 5;
+
+// JEE Main style papers: +4 right, -1 wrong multiple-choice, 0 wrong numerical. 90 questions, 300 marks.
+export const PAPER = {
+  right: 4,
+  wrong: -1,
+  maxMarks: 300,
+  minutes: 180,
+  graceSeconds: 30,
+  // A fixed bonus the first time a paper is finished with at least this many questions answered,
+  // so opening a paper and submitting it blank earns nothing. Once per paper per student.
+  bonus: 200,
+  bonusMinAnswered: 30,
+} as const;

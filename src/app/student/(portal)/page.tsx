@@ -74,6 +74,16 @@ export default async function StudentHome({ searchParams }: { searchParams: Prom
         </div>
       )}
 
+      {(ctx.group === "PCM" || ctx.group === "PCMB") && (
+        <div className={`${card} mt-4 flex flex-wrap items-center justify-between gap-3`}>
+          <div>
+            <b>🎯 JEE practice papers</b>
+            <div className="text-[0.88rem] text-muted">Full-length papers in the JEE Main pattern. Test where you really stand.</div>
+          </div>
+          <Link href="/student/papers" className={btnSoft}>Open papers</Link>
+        </div>
+      )}
+
       <div className="mb-3 mt-7 flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-[1.6rem] font-extrabold">Your subjects</h2>
         <Link href="/student?setup=1" className={`${btnGhost} ${sm}`}>
