@@ -27,6 +27,7 @@ export default async function TestPage({ params }: { params: Promise<{ cid: stri
         title={chapter.title}
         subjectColor={`var(--${subject0?.color_key ?? "phy"})`}
         videoUrl={ctx.videoUrl(chapter)}
+        hindi={chapter.subject_id === "c3-hin"}
       />
     );
   }

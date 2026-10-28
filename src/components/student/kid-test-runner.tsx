@@ -6,9 +6,11 @@ import { useRouter } from "next/navigation";
 import { submitKidTest } from "@/app/student/actions";
 import { btn, btnSoft, input } from "@/components/ui";
 import { fmt } from "@/lib/learning";
+import { HindiInput } from "@/components/student/hindi-input";
+import { hindi, finalizeHindi } from "@/lib/hindi";
 import type { KidView } from "@/lib/kidtest";
 
-type Props = { initial: KidView; title: string; subjectColor: string; videoUrl: string };
+type Props = { initial: KidView; title: string; subjectColor: string; videoUrl: string; hindi?: boolean };
 
 const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 const TYPE_ONLY = "Please type it yourself. Writing it yourself helps you remember!";
@@ -16,7 +18,7 @@ const MAX_TYPED_JUMP = 20;
 
 // The Class 3 test. Same rules as the senior test (every answer right to finish, correct answers
 // stay saved, only the wrong ones are redone) in a bigger, friendlier layout.
-export function KidTestRunner({ initial, title, subjectColor, videoUrl }: Props) {
+export function KidTestRunner({ initial, title, subjectColor, videoUrl, hindi: isHindi = false }: Props) {
   const router = useRouter();
   const [view, setView] = useState<KidView>(initial);
   const [notice, setNotice] = useState(initial.notice);
@@ -29,6 +31,8 @@ export function KidTestRunner({ initial, title, subjectColor, videoUrl }: Props)
   answersRef.current = { mcq, fib, short };
   const busy = useRef(false);
   const autoFor = useRef("");
+  // Hindi chapters: English letters typed become Hindi. The child can switch it off to type English.
+  const [hindiOn, setHindiOn] = useState(true);
 
   const offset = useRef(Date.now() - initial.serverNow);
   const [secs, setSecs] = useState(() => Math.max(0, Math.ceil((new Date(initial.deadline).getTime() - (Date.now() - offset.current)) / 1000)));
@@ -53,6 +57,12 @@ export function KidTestRunner({ initial, title, subjectColor, videoUrl }: Props)
     (auto: boolean) => {
       if (busy.current) return;
       const a = answersRef.current;
+      if (isHindi && hindiOn) {
+        // Any word still in English letters is turned into Hindi first.
+        const fix = (r: Record<string, string>) => Object.fromEntries(Object.entries(r).map(([k, v]) => [k, finalizeHindi(v, hindi.best)]));
+        a.fib = fix(a.fib);
+        a.short = fix(a.short);
+      }
       if (!auto) {
         if (view.mcq.some((q) => !q.ok && a.mcq[q.id] === undefined)) return setNotice("Pick an answer for every question first.");
         if (view.fib.some((q) => !q.ok && !(a.fib[q.id] ?? "").trim())) return setNotice("Fill in every blank first.");
@@ -80,7 +90,7 @@ export function KidTestRunner({ initial, title, subjectColor, videoUrl }: Props)
         }
       });
     },
-    [view, router],
+    [view, router, isHindi, hindiOn],
   );
 
   useEffect(() => {
@@ -119,6 +129,19 @@ export function KidTestRunner({ initial, title, subjectColor, videoUrl }: Props)
         Answer all {view.total} questions and get them all right to earn {fmt(view.points)} points. Take your time! Right answers stay saved, so you only try again the ones you missed.
       </p>
 
+      {isHindi && (
+        <div className="mb-4 flex flex-wrap items-center gap-3 rounded-[18px] border-2 border-line bg-surface p-3.5 text-[0.95rem]">
+          <button type="button" onClick={() => setHindiOn(!hindiOn)} aria-pressed={hindiOn} className={`${hindiOn ? btn : btnSoft} !px-3 !py-[7px] !text-[0.9rem]`}>
+            {hindiOn ? "⌨️ English → हिंदी: ON" : "⌨️ English → हिंदी: OFF"}
+          </button>
+          <span>
+            {hindiOn
+              ? "Type the answer in English letters (like “dilli”) and press space. It turns into हिंदी (दिल्ली). Tap a word to fix it."
+              : "Typing in English letters as they are. Switch it on to get हिंदी."}
+          </span>
+        </div>
+      )}
+
       {notice && <div role="status" className="mb-4 rounded-[18px] border-2 border-primary bg-surface p-3.5 text-[0.95rem] font-bold">{notice}</div>}
 
       {tried && (
@@ -154,12 +177,20 @@ export function KidTestRunner({ initial, title, subjectColor, videoUrl }: Props)
           <div key={q.id} className={cardCls}>
             {bump(`Blank ${i + 1}`, q.ok)}
             <p className="mt-2 font-bold">{q.prompt}</p>
-            <input
-              className={`${input} mt-2 !text-[1.1rem]`} aria-label="Your answer" autoComplete="off" disabled={q.ok || pending}
-              value={q.ok ? q.answer : (fib[q.id] ?? "")}
-              {...typedOnly}
-              onChange={(e) => typed(fib[q.id] ?? "", e.target.value, (v) => setFib({ ...fib, [q.id]: v }), e)}
-            />
+            {isHindi ? (
+              <HindiInput
+                className={`${input} mt-2 !text-[1.1rem]`} ariaLabel="Your answer" disabled={q.ok || pending} hindiOn={hindiOn}
+                value={q.ok ? q.answer : (fib[q.id] ?? "")} extra={typedOnly} onBlocked={() => setNotice(TYPE_ONLY)}
+                onChange={(v) => setFib({ ...fib, [q.id]: v })}
+              />
+            ) : (
+              <input
+                className={`${input} mt-2 !text-[1.1rem]`} aria-label="Your answer" autoComplete="off" disabled={q.ok || pending}
+                value={q.ok ? q.answer : (fib[q.id] ?? "")}
+                {...typedOnly}
+                onChange={(e) => typed(fib[q.id] ?? "", e.target.value, (v) => setFib({ ...fib, [q.id]: v }), e)}
+              />
+            )}
           </div>
         ))}
 
@@ -168,13 +199,21 @@ export function KidTestRunner({ initial, title, subjectColor, videoUrl }: Props)
           <div key={q.id} className={cardCls}>
             {bump(`One line ${i + 1}`, q.ok)}
             <p className="mt-2 font-bold">{q.prompt}</p>
-            <input
-              className={`${input} mt-2 !text-[1.1rem]`} aria-label="Your one-line answer" autoComplete="off" disabled={q.ok || pending}
-              placeholder="Type your answer here…"
-              value={short[q.id] ?? ""}
-              {...typedOnly}
-              onChange={(e) => typed(short[q.id] ?? "", e.target.value, (v) => setShort({ ...short, [q.id]: v }), e)}
-            />
+            {isHindi ? (
+              <HindiInput
+                className={`${input} mt-2 !text-[1.1rem]`} ariaLabel="Your one-line answer" disabled={q.ok || pending} hindiOn={hindiOn}
+                placeholder="Type in English letters, press space…" value={short[q.id] ?? ""} extra={typedOnly} onBlocked={() => setNotice(TYPE_ONLY)}
+                onChange={(v) => setShort({ ...short, [q.id]: v })}
+              />
+            ) : (
+              <input
+                className={`${input} mt-2 !text-[1.1rem]`} aria-label="Your one-line answer" autoComplete="off" disabled={q.ok || pending}
+                placeholder="Type your answer here…"
+                value={short[q.id] ?? ""}
+                {...typedOnly}
+                onChange={(e) => typed(short[q.id] ?? "", e.target.value, (v) => setShort({ ...short, [q.id]: v }), e)}
+              />
+            )}
             {tried && q.feedback && <p className={`mt-2 text-[0.95rem] ${q.ok ? "text-good" : ""}`}>💬 {q.feedback}</p>}
           </div>
         ))}

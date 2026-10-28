@@ -2,6 +2,7 @@ import "server-only";
 import { randomInt } from "node:crypto";
 import { aiGradeKid } from "@/lib/ai-grader";
 import { fibCorrect, norm } from "@/lib/grading";
+import { hindiMatch, hindiNorm } from "@/lib/hindi-engine";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { KID_TEST, TEST_GRACE_SECONDS, KID_LEVELS, levelPoints, type Level } from "@/lib/learning";
 
@@ -130,7 +131,8 @@ export async function loadKidView(studentId: string, chapterId: string): Promise
 // it is right when it contains one of the question's key words.
 const keyCheck = (keys: string[], answer: string) => {
   const low = norm(answer);
-  return low !== "" && keys.some((k) => low.includes(norm(k)));
+  const hi = hindiNorm(answer);
+  return (low !== "" && keys.some((k) => low.includes(norm(k)))) || (hi !== "" && keys.some((k) => hi.includes(hindiNorm(k))));
 };
 
 export async function submitKidAnswers(studentId: string, chapterId: string, input: KidAnswers): Promise<KidOutcome> {
@@ -146,6 +148,8 @@ export async function submitKidAnswers(studentId: string, chapterId: string, inp
   }
 
   const ids = [...s.question_ids.mcq, ...s.question_ids.fib, ...s.question_ids.short];
+  const { data: chapter } = await db.from("chapters").select("title, subject_id").eq("id", chapterId).single();
+  const isHindi = chapter?.subject_id === "c3-hin";
   const { data: keys } = await db.from("question_answers").select("question_id, correct_index, accepted_answers, key_ideas").in("question_id", ids);
   const key = new Map((keys ?? []).map((k) => [k.question_id as string, k]));
   const ok = { mcq: { ...s.ok.mcq }, fib: { ...s.ok.fib }, short: { ...s.ok.short } };
@@ -162,7 +166,9 @@ export async function submitKidAnswers(studentId: string, chapterId: string, inp
     if (ok.fib[id]) continue;
     const text = String(input.fib?.[id] ?? "").slice(0, 100);
     answers.fib[id] = text;
-    ok.fib[id] = fibCorrect((key.get(id)?.accepted_answers ?? []) as string[], text);
+    const accepted = (key.get(id)?.accepted_answers ?? []) as string[];
+    // Hindi: harmless spelling differences (long/short vowel signs, chandrabindu, dots) are accepted.
+    ok.fib[id] = fibCorrect(accepted, text) || (isHindi && hindiMatch(accepted, text));
   }
 
   // One-line answers still to mark, all in a single AI call.
@@ -176,7 +182,7 @@ export async function submitKidAnswers(studentId: string, chapterId: string, inp
     items.push({ id, text });
   }
   if (items.length) {
-    const { data: ch } = await db.from("chapters").select("title, subject_id").eq("id", chapterId).single();
+    const ch = chapter;
     const { data: sub } = await db.from("subjects").select("name").eq("id", ch?.subject_id ?? "").maybeSingle();
     const { data: prompts } = await db.from("questions").select("id, prompt").in("id", items.map((i) => i.id));
     const q = new Map((prompts ?? []).map((p) => [p.id as string, p.prompt as string]));
