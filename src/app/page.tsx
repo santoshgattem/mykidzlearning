@@ -61,9 +61,8 @@ export default async function Home() {
               Learning is a journey. Every assessment is a step toward a successful life.
             </h1>
             <p className="mt-3.5 max-w-[46ch] text-[1.15rem] text-muted">
-              Class 11 Physics, Chemistry, Maths and Biology for CBSE and JEE. Watch the lesson,
-              pass the test and practise in the notebook. Build knowledge and habits that last,
-              and let small rewards celebrate each step along the way.
+              Watch the lesson, pass the test and practise in the notebook. Build knowledge and
+              habits that last, and let small rewards celebrate each step along the way.
             </p>
             <div className="mt-6 grid max-w-[520px] grid-cols-2 gap-3.5">
               <Link href="/parent/login" className={`${btn} !p-4`}>

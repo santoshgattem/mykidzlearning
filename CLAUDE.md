@@ -1,6 +1,6 @@
 # mykidzlearning.com
 
-A study-motivation web app for Class 11 students preparing for CBSE board exams and IIT JEE.
+A study-motivation web app for school students (Class 3 and Class 11 so far; Class 12 coming), including Class 11 students preparing for CBSE board exams and IIT JEE. Public wording must not name a class.
 Students watch a lesson, pass a chapter test at 100%, practise in their notebook, and earn
 points toward rewards their parents set.
 
