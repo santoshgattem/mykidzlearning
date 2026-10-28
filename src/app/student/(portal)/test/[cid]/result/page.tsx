@@ -33,7 +33,13 @@ export default async function ResultPage({ params }: { params: Promise<{ cid: st
           {r.gained > 0 ? `+${fmt(r.gained)} points added.` : "Revision round, so no new points this time."}
         </p>
       </section>
-      {r.feedback && (
+      {ctx.grade === 3 && (
+        <div className="mt-4 rounded-[22px] border-2 border-line bg-surface p-5 text-[1.05rem]">
+          <b>⭐ Well done!</b>
+          <p className="mt-1.5">You answered every question correctly. Now try the notebook practice, and ask your parent to check it.</p>
+        </div>
+      )}
+      {ctx.grade !== 3 && r.feedback && (
         <div className="mt-4 rounded-[22px] border-2 border-line bg-surface p-5">
           <b>{ctx.grade === 3 ? "Your teacher says" : "Feedback on your written answer"}</b>
           <p className="mt-1.5">{r.feedback}</p>

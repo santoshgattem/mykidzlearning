@@ -224,7 +224,7 @@ export async function submitKidAnswers(studentId: string, chapterId: string, inp
       { onConflict: "student_id,chapter_id" },
     );
   }
-  const lastFeedback = Object.values(fb).filter(Boolean).slice(-1)[0] ?? "";
+  const lastFeedback = ""; // the result screen has its own message; old hints would only confuse
   await db.from("test_attempts").insert({
     student_id: studentId, chapter_id: chapterId, level, tries,
     written_answer: s.question_ids.short.map((id) => answers.short[id]).join(" | ").slice(0, 1000), feedback: lastFeedback, graded_by: "ai",

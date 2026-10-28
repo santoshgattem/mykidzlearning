@@ -107,7 +107,9 @@ export default async function ParentPage({ searchParams }: { searchParams: Searc
   const chap = new Map((chapters ?? []).map((c) => [c.id, c]));
   const prog = new Map((progress ?? []).map((p) => [p.chapter_id, p]));
 
-  const groupSubs: readonly string[] = kid.grp ? GROUPS[kid.grp as keyof typeof GROUPS] : [];
+  // Only subjects that exist: Class 3 subjects appear as they are loaded.
+  const known = new Set((subjects ?? []).map((x) => x.id));
+  const groupSubs: readonly string[] = (kid.grp ? GROUPS[kid.grp as keyof typeof GROUPS] : []).filter((id) => known.has(id));
   const groupChapters = (chapters ?? []).filter((c) => groupSubs.includes(c.subject_id));
   const passedIds = new Set((progress ?? []).filter((p) => p.completed_level).map((p) => p.chapter_id));
   const pct = syllabusPct(groupChapters.filter((c) => passedIds.has(c.id)).length, groupChapters.length);
