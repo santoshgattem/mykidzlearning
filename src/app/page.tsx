@@ -1,5 +1,25 @@
 import Link from "next/link";
+import { NewsSlideshow, type Slide } from "@/components/news-slideshow";
 import { btn, btnGhost, btnSoft, sm } from "@/components/ui";
+import { createAdminClient } from "@/lib/supabase/admin";
+
+// The page is rebuilt at most once an hour; saving a slide in the admin portal refreshes it at once.
+export const revalidate = 3600;
+
+async function loadSlides(): Promise<Slide[]> {
+  try {
+    const { data } = await createAdminClient()
+      .from("news_items")
+      .select("id, category, year, headline, title, body, source_name, source_url")
+      .eq("published", true)
+      .order("position")
+      .order("year", { ascending: false })
+      .limit(12);
+    return (data ?? []).map((r) => ({ id: r.id, category: r.category, year: r.year, headline: r.headline, title: r.title, body: r.body, sourceName: r.source_name, sourceUrl: r.source_url }));
+  } catch {
+    return []; // the home page still works without the slides
+  }
+}
 
 const LADDER = [
   { tier: "bronze", icon: "🥉", name: "Bronze", pts: "1,000 pts", reward: "₹100 pocket money for every 1,000 pts" },
@@ -15,7 +35,8 @@ const TIER_BG = {
   diamond: "bg-diamond",
 } as const;
 
-export default function Home() {
+export default async function Home() {
+  const slides = await loadSlides();
   return (
     <>
       <header className="mx-auto flex max-w-[1100px] items-center justify-between px-5 py-3.5">
@@ -76,6 +97,15 @@ export default function Home() {
             <p className="text-sm text-muted">Little celebrations along the way. Parents set the points and rewards; these are examples.</p>
           </div>
         </section>
+
+        {slides.length > 0 && (
+          <section className="mt-12" aria-labelledby="inspire">
+            <h2 id="inspire" className="font-display text-[clamp(1.5rem,4vw,2.2rem)] font-extrabold tracking-tight">Be inspired</h2>
+            <p className="mb-4 mt-1 max-w-[60ch] text-muted">Real results from past years. Every one of them began with one chapter at a time.</p>
+            <NewsSlideshow slides={slides} />
+            <p className="mt-2 text-[0.82rem] text-muted">Results as reported by the sources linked. CBSE does not publish an official topper list.</p>
+          </section>
+        )}
       </main>
     </>
   );

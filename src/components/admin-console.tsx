@@ -6,7 +6,11 @@ import {
   addAdmin,
   approveRequest,
   createParent,
+  deleteNews,
   dismissRequest,
+  saveNews,
+  setNewsPublished,
+  type NewsInput,
   deleteParent,
   removeAdmin,
   resetParentPassword,
@@ -17,6 +21,7 @@ import {
 import { ChangePasswordForm } from "@/components/change-password-form";
 import { btn, btnBad, btnGhost, btnSoft, card, input, label, sm, Tag } from "@/components/ui";
 
+export type NewsRow = { id: string; category: string; year: number; headline: string; title: string; body: string; sourceName: string; sourceUrl: string; published: boolean; position: number };
 export type RequestRow = { id: string; name: string; email: string; phone: string | null; message: string | null; createdAt: string; byParent: boolean };
 
 export type ParentRow = {
@@ -36,11 +41,13 @@ type Props = {
   admins: { id: string; name: string; email: string }[];
   stats: { parents: number; disabled: number; students: number; tested: number; points: number };
   requests: RequestRow[];
+  news: NewsRow[];
 };
 
 const TABS = [
   ["parents", "Parent accounts"],
   ["requests", "Requests"],
+  ["news", "News"],
   ["create", "Create parent"],
   ["settings", "Admin settings"],
 ] as const;
@@ -48,7 +55,7 @@ type Tab = (typeof TABS)[number][0];
 
 const fmt = (n: number) => n.toLocaleString("en-IN");
 
-export function AdminConsole({ me, parents, admins, stats, requests }: Props) {
+export function AdminConsole({ me, parents, admins, stats, requests, news }: Props) {
   const router = useRouter();
   const [tab, setTab] = useState<Tab>("parents");
   const [query, setQuery] = useState("");
@@ -260,6 +267,8 @@ export function AdminConsole({ me, parents, admins, stats, requests }: Props) {
         </section>
       )}
 
+      {tab === "news" && <NewsAdmin news={news} busy={busy} run={run} />}
+
       {tab === "create" && (
         <CreateParent
           busy={busy}
@@ -446,5 +455,90 @@ function AddAdmin({ busy, onAdd }: { busy: boolean; onAdd: (v: { name: string; e
         </button>
       </div>
     </form>
+  );
+}
+
+// ---------------------------------------------------------------- "Be inspired" slides
+const BLANK: NewsInput = { category: "jee", year: new Date().getFullYear() - 1, headline: "", title: "", body: "", sourceName: "", sourceUrl: "", published: true, position: 100 };
+
+function NewsAdmin({ news, busy, run }: { news: NewsRow[]; busy: boolean; run: (a: () => Promise<Result>, ok?: () => void) => void }) {
+  const [f, setF] = useState<NewsInput>(BLANK);
+  const set = <K extends keyof NewsInput>(k: K, v: NewsInput[K]) => setF({ ...f, [k]: v });
+  const editing = !!f.id;
+
+  return (
+    <div className="grid gap-4 lg:grid-cols-[1fr_1.1fr]">
+      <form
+        className={`${card} flex flex-col gap-3`}
+        onSubmit={(e) => { e.preventDefault(); run(() => saveNews(f), () => setF(BLANK)); }}
+      >
+        <h3 className="text-[1.15rem] font-bold">{editing ? "Edit slide" : "Add a slide"}</h3>
+        <p className="text-[0.85rem] text-muted">Slides rotate on the home page under “Be inspired”. Use real, published results and link where you found them. Names are optional: you can describe the result without naming the student.</p>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className={label} htmlFor="n-cat">Category</label>
+            <select id="n-cat" value={f.category} onChange={(e) => set("category", e.target.value)} className={input}>
+              <option value="jee">IIT JEE</option><option value="cbse">CBSE</option><option value="neet">NEET</option><option value="other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label className={label} htmlFor="n-year">Year of the result</label>
+            <input id="n-year" type="number" required value={f.year} onChange={(e) => set("year", Number(e.target.value))} className={input} />
+          </div>
+        </div>
+        <div>
+          <label className={label} htmlFor="n-head">Big line (up to 60 characters)</label>
+          <input id="n-head" required maxLength={60} value={f.headline} onChange={(e) => set("headline", e.target.value)} className={input} placeholder="332 / 360" />
+        </div>
+        <div>
+          <label className={label} htmlFor="n-title">Title</label>
+          <input id="n-title" required maxLength={120} value={f.title} onChange={(e) => set("title", e.target.value)} className={input} />
+        </div>
+        <div>
+          <label className={label} htmlFor="n-body">Text (up to 400 characters)</label>
+          <textarea id="n-body" rows={3} maxLength={400} value={f.body} onChange={(e) => set("body", e.target.value)} className={input} />
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className={label} htmlFor="n-src">Source name</label>
+            <input id="n-src" required maxLength={80} value={f.sourceName} onChange={(e) => set("sourceName", e.target.value)} className={input} placeholder="Careers360" />
+          </div>
+          <div>
+            <label className={label} htmlFor="n-pos">Order (lower comes first)</label>
+            <input id="n-pos" type="number" value={f.position} onChange={(e) => set("position", Number(e.target.value))} className={input} />
+          </div>
+        </div>
+        <div>
+          <label className={label} htmlFor="n-url">Source link</label>
+          <input id="n-url" type="url" required value={f.sourceUrl} onChange={(e) => set("sourceUrl", e.target.value)} className={input} placeholder="https://" />
+        </div>
+        <label className="flex items-center gap-2 font-bold">
+          <input type="checkbox" checked={f.published} onChange={(e) => set("published", e.target.checked)} /> Show on the home page
+        </label>
+        <div className="flex flex-wrap gap-2.5">
+          <button disabled={busy} className={btn}>{editing ? "Save changes" : "Add slide"}</button>
+          {editing && <button type="button" className={btnGhost} onClick={() => setF(BLANK)}>Cancel</button>}
+        </div>
+      </form>
+
+      <section className={`${card} flex flex-col gap-3`}>
+        <h3 className="text-[1.15rem] font-bold">Slides ({news.length})</h3>
+        {news.length === 0 && <p className="text-muted">No slides yet. The home page hides the “Be inspired” section until there is at least one showing.</p>}
+        {news.map((n) => (
+          <div key={n.id} className={`rounded-[18px] border-2 p-3 ${n.published ? "border-line" : "border-line opacity-60"}`}>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span><b>{n.headline}</b> <span className="text-[0.82rem] text-muted">{n.category.toUpperCase()} · {n.year} · order {n.position}</span></span>
+              {!n.published && <Tag>Hidden</Tag>}
+            </div>
+            <div className="mt-1 text-[0.9rem]">{n.title}</div>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <button disabled={busy} className={`${btnSoft} ${sm}`} onClick={() => { setF({ ...n, id: n.id }); window.scrollTo(0, 0); }}>Edit</button>
+              <button disabled={busy} className={`${btnGhost} ${sm}`} onClick={() => run(() => setNewsPublished(n.id, !n.published))}>{n.published ? "Hide" : "Show"}</button>
+              <button disabled={busy} className={`${btnBad} ${sm}`} onClick={() => { if (confirm("Delete this slide?")) run(() => deleteNews(n.id)); }}>Delete</button>
+            </div>
+          </div>
+        ))}
+      </section>
+    </div>
   );
 }

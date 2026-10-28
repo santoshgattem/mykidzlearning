@@ -210,3 +210,58 @@ export async function dismissRequest(requestId: string): Promise<Result> {
   revalidatePath("/admin");
   return { ok: true, message: "Request dismissed." };
 }
+
+// ---------------------------------------------------------------- "Be inspired" slides on the home page
+export type NewsInput = {
+  id?: string; category: string; year: number; headline: string; title: string; body: string;
+  sourceName: string; sourceUrl: string; published: boolean; position: number;
+};
+const CATEGORIES = ["jee", "cbse", "neet", "other"];
+
+export async function saveNews(input: NewsInput): Promise<Result> {
+  await requireAdmin();
+  const f = {
+    category: String(input.category), year: Math.trunc(Number(input.year)), headline: String(input.headline ?? "").trim(), title: String(input.title ?? "").trim(),
+    body: String(input.body ?? "").trim(), source_name: String(input.sourceName ?? "").trim(), source_url: String(input.sourceUrl ?? "").trim(),
+    published: !!input.published, position: Math.trunc(Number(input.position)) || 100,
+  };
+  if (!CATEGORIES.includes(f.category)) return { ok: false, error: "Choose a category." };
+  if (!(f.year >= 1990 && f.year <= 2100)) return { ok: false, error: "Enter a year, like 2025." };
+  if (!f.headline || f.headline.length > 60) return { ok: false, error: "The big line is required, up to 60 characters (for example 332 / 360)." };
+  if (!f.title || f.title.length > 120) return { ok: false, error: "The title is required, up to 120 characters." };
+  if (f.body.length > 400) return { ok: false, error: "Keep the text to 400 characters." };
+  if (!f.source_name || f.source_name.length > 80) return { ok: false, error: "Name the source (up to 80 characters)." };
+  // Only web links, so a slide can never carry a script or any other kind of link.
+  try {
+    const u = new URL(f.source_url);
+    if (u.protocol !== "https:" && u.protocol !== "http:") throw new Error();
+  } catch {
+    return { ok: false, error: "The source link must start with https://" };
+  }
+
+  const db = createAdminClient();
+  const row = { ...f, updated_at: new Date().toISOString() };
+  const { error } = input.id ? await db.from("news_items").update(row).eq("id", input.id) : await db.from("news_items").insert(row);
+  if (error) return { ok: false, error: "Couldn’t save the slide." };
+  revalidatePath("/");
+  revalidatePath("/admin");
+  return { ok: true, message: "Slide saved." };
+}
+
+export async function setNewsPublished(id: string, published: boolean): Promise<Result> {
+  await requireAdmin();
+  const { error } = await createAdminClient().from("news_items").update({ published, updated_at: new Date().toISOString() }).eq("id", id);
+  if (error) return { ok: false, error: "Couldn’t update the slide." };
+  revalidatePath("/");
+  revalidatePath("/admin");
+  return { ok: true, message: published ? "Slide is showing on the home page." : "Slide is hidden." };
+}
+
+export async function deleteNews(id: string): Promise<Result> {
+  await requireAdmin();
+  const { error } = await createAdminClient().from("news_items").delete().eq("id", id);
+  if (error) return { ok: false, error: "Couldn’t delete the slide." };
+  revalidatePath("/");
+  revalidatePath("/admin");
+  return { ok: true, message: "Slide deleted." };
+}
