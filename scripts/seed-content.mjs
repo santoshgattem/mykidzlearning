@@ -2,6 +2,7 @@
 //   npm run seed-content              (only if the questions table is empty)
 //   npm run seed-content -- --force   (wipe and reload ALL chapters and questions)
 //   npm run seed-content -- --dry     (build and validate only; writes docs/COVERAGE.md, touches no database)
+//   npm run seed-content -- --only eng  (add or refresh ONE subject; never touches other subjects or any progress)
 //
 // Sources:
 //   content/class11/<subject>.mjs        chapter lists (NCERT order) and the base questions
@@ -30,8 +31,8 @@ if (start < 0 || end < 0) throw new Error("Could not find the question bank in t
 const { SUBJECTS } = new Function(`${html.slice(start, end)}; return { SUBJECTS };`)();
 const legacy = new Map(Object.values(SUBJECTS).flatMap((s) => s.topics.map((t) => [t.id, t])));
 
-const GROUPS = { PCM: ["phy", "chem", "math"], PCB: ["phy", "chem", "bio"], PCMB: ["phy", "chem", "math", "bio"] };
-const FILES = { phy: "physics", chem: "chemistry", math: "maths", bio: "biology" };
+const GROUPS = { PCM: ["phy", "chem", "math", "eng"], PCB: ["phy", "chem", "bio", "eng"], PCMB: ["phy", "chem", "math", "bio", "eng"] };
+const FILES = { phy: "physics", chem: "chemistry", math: "maths", bio: "biology", eng: "english" };
 const videos = existsSync(new URL("../content/class11/videos.json", import.meta.url))
   ? JSON.parse(readFileSync(new URL("../content/class11/videos.json", import.meta.url), "utf8"))
   : {};
@@ -87,13 +88,15 @@ for (const [i, [sid, file]] of Object.entries(FILES).entries()) {
     if (!ch.title) problems.push(`${ch.id}: missing title`);
     if (!ch.paras.length || ch.paras.some((p) => !p.q || !p.k?.length)) problems.push(`${ch.id}: written question or key ideas missing`);
     if (ch.practice.length < 3) problems.push(`${ch.id}: fewer than 3 practice items`);
-    // Biology keeps the prototype's small bank for now; the depth rules apply to PCM.
+    // Biology and English keep the prototype's small banks for now; the depth rules apply to PCM.
+    // English has Foundation and CBSE Board questions only; the JEE levels top up from those.
+    const small = sid === "bio" || sid === "eng";
     const min = sid === "bio" ? 1 : 5;
-    for (const l of [1, 2, 3, 4]) {
-      if (count(ch.mcq, l) < min) problems.push(`${ch.id}: only ${count(ch.mcq, l)} MCQs at level ${l} (need ${min}+)`);
+    for (const l of sid === "eng" ? [1, 2] : [1, 2, 3, 4]) {
+      if (count(ch.mcq, l) < (sid === "eng" ? 2 : min)) problems.push(`${ch.id}: only ${count(ch.mcq, l)} MCQs at level ${l} (need ${min}+)`);
     }
     if (count(ch.fib, 1) < 2) problems.push(`${ch.id}: fewer than 2 level-1 fill-in-the-blanks`);
-    if (sid !== "bio") {
+    if (!small) {
       for (const l of [2, 3, 4]) {
         if (count(ch.fib, l) < 2) problems.push(`${ch.id}: only ${count(ch.fib, l)} fill-in-the-blanks at level ${l} (need 2+)`);
       }
@@ -149,7 +152,7 @@ if (problems.length) {
 }
 const per = (sid) => chapters.filter((c) => c.subject_id === sid).length;
 const summary =
-  `${chapters.length} chapters (Physics ${per("phy")}, Chemistry ${per("chem")}, Maths ${per("math")}, Biology ${per("bio")}), ` +
+  `${chapters.length} chapters (Physics ${per("phy")}, Chemistry ${per("chem")}, Maths ${per("math")}, Biology ${per("bio")}, English ${per("eng")}), ` +
   `${practice.length} practice items, ${questions.length} questions ` +
   `(${questions.filter((q) => q.kind === "mcq").length} MCQ, ${questions.filter((q) => q.kind === "fib").length} fill-in, ${questions.filter((q) => q.kind === "written").length} written).`;
 if (dry) {
@@ -159,6 +162,34 @@ if (dry) {
 
 // ---- load
 const force = process.argv.includes("--force");
+const onlyIdx = process.argv.indexOf("--only");
+const only = onlyIdx > 0 ? process.argv[onlyIdx + 1] : null;
+if (only) {
+  // Add or refresh one subject. Never deletes chapters of other subjects, and never touches progress.
+  if (!FILES[only]) { console.error(`Unknown subject "${only}". Use one of: ${Object.keys(FILES).join(", ")}`); process.exit(1); }
+  const mine = new Set(chapters.filter((c) => c.subject_id === only).map((c) => c.id));
+  const must = async (label, p) => { const { error } = await p; if (error) { console.error(`${label} failed:`, error.message); process.exit(1); } };
+  const { count: have } = await db.from("questions").select("id", { count: "exact", head: true }).in("chapter_id", [...mine]);
+  if (have > 0 && !force) { console.log(`${only} already has ${have} questions. Add --force to replace just this subject's questions.`); process.exit(0); }
+  if (have > 0) {
+    const { count: prog } = await db.from("chapter_progress").select("student_id", { count: "exact", head: true }).in("chapter_id", [...mine]);
+    if (prog > 0 && !process.argv.includes("--wipe-progress")) { console.error(`Refusing: ${prog} progress rows on ${only} chapters would be deleted. Add --wipe-progress only if you really want that.`); process.exit(1); }
+    await must("clear old questions", db.from("questions").delete().in("chapter_id", [...mine]));
+  }
+  await must("subject", db.from("subjects").upsert(subjects.filter((x) => x.id === only)));
+  await must("group_subjects", db.from("group_subjects").upsert(Object.entries(GROUPS).filter(([, subs]) => subs.includes(only)).map(([grp]) => ({ grp, subject_id: only }))));
+  await must("chapters", db.from("chapters").upsert(chapters.filter((c) => mine.has(c.id))));
+  await must("chapter_practice", db.from("chapter_practice").upsert(practice.filter((p) => mine.has(p.chapter_id))));
+  const qs = questions.filter((q) => mine.has(q.chapter_id));
+  const ids = new Set(qs.map((q) => q.id));
+  const as = answers.filter((a) => ids.has(a.question_id));
+  for (let i = 0; i < qs.length; i += 200) {
+    await must("questions", db.from("questions").insert(qs.slice(i, i + 200)));
+    await must("question_answers", db.from("question_answers").insert(as.slice(i, i + 200)));
+  }
+  console.log(`Loaded ${only}: ${mine.size} chapters, ${qs.length} questions.`);
+  process.exit(0);
+}
 const { count } = await db.from("questions").select("id", { count: "exact", head: true });
 if (count > 0 && !force) {
   console.log(`The questions table already has ${count} rows. Use --force to wipe and reload.`);

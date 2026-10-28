@@ -22,9 +22,9 @@ export type Tier = keyof typeof TIERS;
 export const TIER_IDS = Object.keys(TIERS) as Tier[];
 
 export const GROUPS = {
-  PCM: ["phy", "chem", "math"],
-  PCB: ["phy", "chem", "bio"],
-  PCMB: ["phy", "chem", "math", "bio"],
+  PCM: ["phy", "chem", "math", "eng"],
+  PCB: ["phy", "chem", "bio", "eng"],
+  PCMB: ["phy", "chem", "math", "bio", "eng"],
 } as const;
 export type Group = keyof typeof GROUPS;
 

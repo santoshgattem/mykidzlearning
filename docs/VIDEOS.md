@@ -41,3 +41,28 @@ One official Physics Wallah video per chapter, checked to exist on 2026-10-26. P
 | m12 | [Limits and Derivatives / Full Chapter in ONE SHOT / Chapter 12 / Class 11 Maths 🔥](https://www.youtube.com/watch?v=CHWhaAlo_ms) | PW Class 11 Science |
 | m13 | [Statistics / Full Chapter in ONE SHOT / Chapter 13 / Class 11 Maths 🔥](https://www.youtube.com/watch?v=4LxrzD-MRBk) | PW Class 11 Science |
 | m14 | [Probability / Full Chapter in ONE SHOT / Chapter 16 / Class 11 Maths 🔥](https://www.youtube.com/watch?v=5Ok1AkHBsnw) | PW Class 11 Science |
+
+## English (added 2026-10-28)
+
+Search results for each chapter, picked for full NCERT coverage in English. Parents can replace any of them in the Video links tab.
+
+| Chapter | Video title | Channel |
+|---|---|---|
+| e1 | [The Portrait of a Lady Class 11 One Shot](https://www.youtube.com/watch?v=920ewWIJFzc) | Next Toppers - 11th Science |
+| e2 | [A Photograph Class 11 One Shot](https://www.youtube.com/watch?v=Ey3rluPWEBM) | Next Toppers - 11th Science |
+| e3 | [We Are Not Afraid To Die If We Can All Be Together Class 11](https://www.youtube.com/watch?v=QWYVld_XEv8) | Next Toppers - 11th Science |
+| e4 | [Discovering Tut The Saga Continues Class 11 Explanation](https://www.youtube.com/watch?v=8rujtX2sCqk) | Next Toppers - 11th Science |
+| e5 | [The Laburnum Top Class 11 Explanation](https://www.youtube.com/watch?v=TpouxgyBA5A) | Next Toppers - 11th Science |
+| e6 | [The Voice of the Rain Class 11 One Shot](https://www.youtube.com/watch?v=_PA1TV9u_j8) | Next Toppers - 11th Science |
+| e7 | [The Ailing Planet: The Green Movement's Role - Summary, Ques Ans](https://www.youtube.com/watch?v=wua5BMCprKM) | Magnet Brains |
+| e8 | [Childhood (Poem) - Explanation & Word Meanings](https://www.youtube.com/watch?v=qkVra0gBtW4) | Magnet Brains |
+| e9 | [The Adventure Class 11 in One Shot](https://www.youtube.com/watch?v=JWf6cGGEz_8) | Next Toppers - 11th Science |
+| e10 | [Silk Road Class 11 Explanation](https://www.youtube.com/watch?v=l0aBJ-Lbq90) | Next Toppers - 11th Science |
+| e11 | [Father to Son Class 11 One Shot Summary](https://www.youtube.com/watch?v=iWjQw9_nBDw) | Next Toppers - 11th Science |
+| e12 | [The Summer of the Beautiful White Horse Class 11](https://www.youtube.com/watch?v=D7ClOQQF68Q) | Next Toppers - 11th Science |
+| e13 | [The Address Class 11 One Shot](https://www.youtube.com/watch?v=3sTw8E2NxqY) | Next Toppers - 11th Science |
+| e14 | [Mother's Day Class 11 Animation in English](https://www.youtube.com/watch?v=hGMmm7NipsQ) | Students Heaven |
+| e15 | [Birth Class 11 Animation in English](https://www.youtube.com/watch?v=PamTEVki33o) | Students Heaven |
+| e16 | [The Tale of the Melon City Class 11 English](https://www.youtube.com/watch?v=bSUp338R3vk) | Magnet Brains |
+| e17 | [Note Making and Summary Writing Class 11](https://www.youtube.com/watch?v=w48K7urM4UI) | Next Toppers - 11th Science |
+| e18 | [11th English Writing Skills One Shot](https://www.youtube.com/watch?v=gXAj-geuheg) | Pradeep Giri 11th and 12th Academy |

@@ -17,6 +17,7 @@
   --chem: #e8338a;
   --math: #f08a00;
   --bio: #0fa978;
+  --eng: #0b8a9c;
   --bronze: #c9773a;
   --silver: #8e9aae;
   --gold: #e3a600;
@@ -40,6 +41,7 @@
     --chem: #ff5fa8;
     --math: #ffaa33;
     --bio: #2ed39a;
+    --eng: #3cc6d4;
     color-scheme: dark;
   }
 }
@@ -59,6 +61,7 @@
   --chem: #ff5fa8;
   --math: #ffaa33;
   --bio: #2ed39a;
+  --eng: #3cc6d4;
   color-scheme: dark;
 }
 
@@ -77,6 +80,7 @@
   --color-chem: var(--chem);
   --color-math: var(--math);
   --color-bio: var(--bio);
+  --color-eng: var(--eng);
   --color-bronze: var(--bronze);
   --color-silver: var(--silver);
   --color-gold: var(--gold);

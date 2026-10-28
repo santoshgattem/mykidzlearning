@@ -68,6 +68,8 @@ A disabled parent cannot sign in, and neither can their children.
 
 ## Content
 
+- English (NCERT Hornbill + Snapshots + writing skills, 18 chapters, ids e1-e18) is part of every group (PCM, PCB, PCMB). Its bank is small (Foundation and CBSE Board questions); JEE-level tests top up from those. Load or refresh it alone with `npm run seed-content -- --only eng`.
+
 - Move the question bank (`SUBJECTS` and `EXTRA` in the prototype) into database tables with
   a `level` column (1–4) so questions can be added without code changes.
 - Later: an admin screen to add/edit questions and chapters, and Class 12 content.
@@ -75,7 +77,7 @@ A disabled parent cannot sign in, and neither can their children.
 ## Design
 
 Match the prototype: bright subject colours (Physics blue, Chemistry pink, Maths orange,
-Biology green), Bricolage Grotesque headings, Nunito Sans body, light and dark mode,
+Biology green, English teal), Bricolage Grotesque headings, Nunito Sans body, light and dark mode,
 mobile-first. Student side playful; parent and admin side calm and clear.
 
 ## Working style
