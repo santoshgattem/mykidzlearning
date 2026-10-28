@@ -3,11 +3,11 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
-  addChild, giveBonus, markRewardGiven, removeChild, reviewNotebook, saveChildSettings,
+  addChild, giveBonus, markRewardGiven, removeChild, reviewNotebook, saveChildSettings, setChildClass,
   saveMilestones, saveVideoLinks, type MilestoneInput, type Result,
 } from "@/app/parent/actions";
 import { btn, btnBad, btnGood, btnSoft, card, input, label, sm } from "@/components/ui";
-import { TIERS, TIER_IDS, type Tier } from "@/lib/learning";
+import { SENIOR_GROUPS, TIERS, TIER_IDS, type Tier } from "@/lib/learning";
 
 // Runs a server action, shows its message, and refreshes the page data.
 function useRun() {
@@ -35,10 +35,42 @@ function Msg({ msg }: { msg: { ok: boolean; text: string } | null }) {
   );
 }
 
+// ---------------------------------------------------------------- class picker
+const GROUP_SUBJECTS: Record<string, string> = {
+  PCM: "Physics, Chemistry, Maths, English",
+  PCB: "Physics, Chemistry, Biology, English",
+  PCMB: "Physics, Chemistry, Maths, Biology, English",
+};
+
+// A parent chooses one class for a child: Class 3, or Class 11 with a group. The child cannot change it.
+export function ClassPicker({ grade, group, onChange }: { grade: number | null; group: string | null; onChange: (grade: number | null, group: string | null) => void }) {
+  return (
+    <div className="flex flex-col gap-2.5">
+      <div className="flex flex-wrap gap-2.5" role="group" aria-label="Class">
+        <button type="button" aria-pressed={grade === 3} className={grade === 3 ? btn : btnSoft} onClick={() => onChange(3, "C3")}>Class 3</button>
+        <button type="button" aria-pressed={grade === 11} className={grade === 11 ? btn : btnSoft} onClick={() => onChange(11, group && group !== "C3" ? group : null)}>Class 11</button>
+        <button type="button" disabled className={btnSoft}>Class 12 (coming soon)</button>
+      </div>
+      {grade === 3 && <p className="text-[0.9rem] text-muted">Subjects: Maths, EVS, English and Hindi (Telugu coming soon).</p>}
+      {grade === 11 && (
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2.5" role="group" aria-label="Group">
+          {SENIOR_GROUPS.map((g) => (
+            <button key={g} type="button" aria-pressed={group === g} onClick={() => onChange(11, g)} className={`${group === g ? btn : btnSoft} !text-left`}>
+              <b>{g}</b>
+              <div className="text-[0.82rem] opacity-85">{GROUP_SUBJECTS[g]}</div>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ---------------------------------------------------------------- add child
 export function AddChildForm({ first }: { first: boolean }) {
   const { run, pending, msg, router } = useRun();
   const [v, setV] = useState({ name: "", email: "", pin: "" });
+  const [cls, setCls] = useState<{ grade: number | null; group: string | null }>({ grade: null, group: null });
   const set = (k: keyof typeof v) => (e: React.ChangeEvent<HTMLInputElement>) => setV({ ...v, [k]: e.target.value });
 
   return (
@@ -46,11 +78,12 @@ export function AddChildForm({ first }: { first: boolean }) {
       className={`${card} mt-4 flex max-w-[520px] flex-col gap-3.5`}
       onSubmit={(e) => {
         e.preventDefault();
-        run(() => addChild(v), (r) => router.push(`/parent?kid=${r.kidId}&tab=rewards`));
+        if (!cls.grade || !cls.group) return;
+        run(() => addChild({ ...v, grade: cls.grade!, group: cls.group! }), (r) => router.push(`/parent?kid=${r.kidId}&tab=rewards`));
       }}
     >
       <h2 className="text-[1.6rem] font-extrabold">{first ? "Add your child to get started" : "Add a child"}</h2>
-      <p className="text-muted">Your child signs in with this email and PIN, then picks their class and group.</p>
+      <p className="text-muted">Your child signs in with this email and PIN. You choose their class, and they will see only that class’s subjects.</p>
       <div>
         <label htmlFor="kn" className={label}>Child’s name</label>
         <input id="kn" required value={v.name} onChange={set("name")} className={input} />
@@ -66,9 +99,13 @@ export function AddChildForm({ first }: { first: boolean }) {
           value={v.pin} onChange={set("pin")} className={input}
         />
       </div>
+      <div>
+        <span className={label}>Class</span>
+        <ClassPicker grade={cls.grade} group={cls.group} onChange={(grade, group) => setCls({ grade, group })} />
+      </div>
       <Msg msg={msg} />
       <div>
-        <button type="submit" disabled={pending} className={btn}>{pending ? "Adding…" : "Add child"}</button>
+        <button type="submit" disabled={pending || !cls.grade || !cls.group} className={btn}>{pending ? "Adding…" : "Add child"}</button>
       </div>
     </form>
   );
@@ -230,10 +267,12 @@ export function VideoLinksForm({ kidId, channel, subjects }: { kidId: string; ch
 }
 
 // ---------------------------------------------------------------- child settings
-export function ChildSettings({ kidId, name, classText }: { kidId: string; name: string; classText: string }) {
+export function ChildSettings({ kidId, name, classText, grade: g0, group: gr0 }: { kidId: string; name: string; classText: string; grade: number | null; group: string | null }) {
   const { run, pending, msg, router } = useRun();
   const [n, setN] = useState(name);
   const [pin, setPin] = useState("");
+  const [cls, setCls] = useState<{ grade: number | null; group: string | null }>({ grade: g0, group: gr0 });
+  const classChanged = cls.grade !== g0 || cls.group !== gr0;
 
   return (
     <div className={`${card} flex max-w-[520px] flex-col gap-3.5`}>
@@ -251,7 +290,19 @@ export function ChildSettings({ kidId, name, classText }: { kidId: string; name:
       </div>
       <div>
         <span className={label}>Class and group</span>
-        <p>{classText}</p>
+        <p className="mb-2">Now: <b>{classText}</b>. Only you can change this. {name} sees only this class’s subjects.</p>
+        <ClassPicker grade={cls.grade} group={cls.group} onChange={(grade, group) => setCls({ grade, group })} />
+        {classChanged && (
+          <div className="mt-2.5">
+            <p className="mb-2 text-[0.88rem] text-muted">Changing the class changes the subjects. Points and past results stay. A test in progress is cleared.</p>
+            <button
+              type="button" disabled={pending || !cls.grade || !cls.group} className={btn}
+              onClick={() => { if (cls.grade && cls.group && confirm(`Change ${name}’s class?`)) run(() => setChildClass(kidId, cls.grade!, cls.group!)); }}
+            >
+              Save class
+            </button>
+          </div>
+        )}
       </div>
       <Msg msg={msg} />
       <div className="flex flex-wrap gap-3">

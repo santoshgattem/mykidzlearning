@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentUser } from "@/lib/auth";
-import { GROUPS, PTS, SENIOR_GROUPS, isKid, type Group } from "@/lib/learning";
+import { PTS, isKid } from "@/lib/learning";
 import { ensureKidSession, submitKidAnswers, type KidAnswers, type KidOutcome } from "@/lib/kidtest";
 import { ensureSession, submitAnswers, type Answers, type SubmitOutcome } from "@/lib/test";
 import { getStudentContext } from "@/lib/student";
@@ -27,22 +27,6 @@ async function chapterFor(chapterId: string) {
   const chapter = ctx.chapters.find((c) => c.id === chapterId);
   if (!chapter) return { ctx, chapter: null };
   return { ctx, chapter: ctx.unlocked(chapter) ? chapter : null };
-}
-
-// ---------------------------------------------------------------- class and group
-export async function saveSetup(grade: number, group: string): Promise<Result> {
-  const user = await requireStudent();
-  if (grade !== 11 && grade !== 3) return fail("Class 12 is coming soon.");
-  // Class 3 has no group to choose: it is always C3. Class 11 picks PCM, PCB or PCMB.
-  const grp = (grade === 3 ? "C3" : group) as Group;
-  if (grade === 11 && !(SENIOR_GROUPS as readonly string[]).includes(grp)) return fail("Choose a group.");
-  const { error } = await createAdminClient()
-    .from("students")
-    .update({ grade, grp })
-    .eq("id", user.id);
-  if (error) return fail("Couldn’t save. Try again.");
-  refresh();
-  return { ok: true };
 }
 
 // ---------------------------------------------------------------- step 1: the video (+20, once)

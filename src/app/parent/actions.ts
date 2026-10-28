@@ -6,7 +6,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentUser } from "@/lib/auth";
 import { PIN_REGEX, pinToPassword } from "@/lib/pin";
 import { revokeSessions } from "@/lib/limiter";
-import { PTS, TIER_IDS, type Tier } from "@/lib/learning";
+import { PTS, SENIOR_GROUPS, TIER_IDS, type Group, type Tier } from "@/lib/learning";
 
 export type Result = { ok: true; message?: string; kidId?: string } | { ok: false; error: string };
 
@@ -34,13 +34,22 @@ async function ownChild(kidId: string) {
 
 const done = () => revalidatePath("/parent");
 
+// The class a parent can give a child: Class 3, or Class 11 with PCM, PCB or PCMB. Class 12 is not open yet.
+function validClass(grade: number, group: string): Group | null {
+  if (grade === 3) return "C3";
+  if (grade === 11 && (SENIOR_GROUPS as readonly string[]).includes(group)) return group as Group;
+  return null;
+}
+
 // ---------------------------------------------------------------- children
-export async function addChild(input: { name: string; email: string; pin: string }): Promise<Result> {
+export async function addChild(input: { name: string; email: string; pin: string; grade: number; group: string }): Promise<Result> {
   const parent = await requireParent();
   const name = input.name.trim().slice(0, 80);
   const email = input.email.trim().toLowerCase();
   if (!name || !validEmail(email)) return fail("Enter your child’s name and a valid email.");
   if (!PIN_REGEX.test(input.pin)) return fail("PIN must be exactly 4 digits.");
+  const grp = validClass(Number(input.grade), String(input.group));
+  if (!grp) return fail("Choose your child’s class (and group for Class 11).");
 
   const db = createAdminClient();
   const { data, error } = await db.auth.admin.createUser({
@@ -57,7 +66,7 @@ export async function addChild(input: { name: string; email: string; pin: string
   const { error: pe } = await db.from("profiles").insert({
     id, role: "student", full_name: name, email, created_by: parent.id,
   });
-  const { error: se } = pe ? { error: pe } : await db.from("students").insert({ id, parent_id: parent.id });
+  const { error: se } = pe ? { error: pe } : await db.from("students").insert({ id, parent_id: parent.id, grade: Number(input.grade), grp });
   if (pe || se) {
     await db.auth.admin.deleteUser(id);
     return fail("Couldn’t add your child.");
@@ -84,6 +93,22 @@ export async function saveChildSettings(kidId: string, input: { name: string; pi
   }
   done();
   return { ok: true, message: pin ? "Saved. The new PIN works now." : "Saved." };
+}
+
+// The parent decides which class a child studies. The child sees only that class's subjects and
+// cannot change it. A test in progress is cleared, because its questions belong to the old class.
+export async function setChildClass(kidId: string, grade: number, group: string): Promise<Result> {
+  await requireParent();
+  if (!(await ownChild(kidId))) return fail("Child not found.");
+  const grp = validClass(Number(grade), String(group));
+  if (!grp) return fail("Choose a class (and a group for Class 11).");
+  const db = createAdminClient();
+  const { error } = await db.from("students").update({ grade: Number(grade), grp }).eq("id", kidId);
+  if (error) return fail("Couldn’t save the class. Try again.");
+  await db.from("test_sessions").delete().eq("student_id", kidId);
+  revalidatePath("/parent");
+  revalidatePath("/student", "layout");
+  return { ok: true, message: "Class saved. Your child now sees only that class’s subjects." };
 }
 
 export async function removeChild(kidId: string): Promise<Result> {

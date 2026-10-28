@@ -117,7 +117,7 @@ export default async function ParentPage({ searchParams }: { searchParams: Searc
   const level = levelForPct(pct);
   const badge = [...(milestones ?? [])].filter((m) => kid.points >= m.points).pop();
   const pending = (progress ?? []).filter((p) => p.notebook_status === "pending").length;
-  const classText = kid.grp ? `Class ${kid.grade}, ${kid.grp}` : "Not chosen yet";
+  const classText = kid.grp ? (kid.grade === 3 ? "Class 3" : `Class ${kid.grade}, ${kid.grp}`) : "Not chosen yet";
   const date = (d: string) => new Date(d).toLocaleDateString("en-IN");
   const chapterLabel = (id: string) => {
     const c = chap.get(id);
@@ -174,7 +174,7 @@ export default async function ParentPage({ searchParams }: { searchParams: Searc
                   );
                 })
               ) : (
-                <p className="mt-2 text-muted">{kid.name} hasn’t picked a class and group yet. This happens on their first sign-in.</p>
+                <p className="mt-2 text-muted">You haven’t chosen {kid.name}’s class yet. Open <b>Child settings</b> to choose it.</p>
               )}
             </section>
 
@@ -322,7 +322,7 @@ export default async function ParentPage({ searchParams }: { searchParams: Searc
           />
         )}
 
-        {tab === "settings" && <ChildSettings key={kid.id + kid.name} kidId={kid.id} name={kid.name} classText={classText} />}
+        {tab === "settings" && <ChildSettings key={kid.id + kid.name + kid.grp} kidId={kid.id} name={kid.name} classText={classText} grade={kid.grade ?? null} group={kid.grp ?? null} />}
 
         <details className={`${card} mt-8`}>
           <summary className="cursor-pointer font-bold">Need an account for your partner or another parent?</summary>

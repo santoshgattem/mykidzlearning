@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { SetupForm } from "@/components/student/setup-form";
 import { LevelCard } from "@/components/student/level-card";
 import { RewardRoad } from "@/components/student/reward-road";
 import { btn, btnGhost, btnSoft, card, sm } from "@/components/ui";
@@ -8,12 +7,17 @@ import { createClient } from "@/lib/supabase/server";
 import { WEEKLY_TARGET } from "@/lib/learning";
 import { weekStart } from "@/lib/week";
 
-export default async function StudentHome({ searchParams }: { searchParams: Promise<{ setup?: string }> }) {
+export default async function StudentHome() {
   const ctx = await getStudentContext();
-  const { setup } = await searchParams;
 
-  if (!ctx.group || !ctx.grade || setup) {
-    return <SetupForm name={ctx.name} grade={ctx.grade} group={ctx.group} />;
+  // A parent chooses each child's class; a child cannot choose or change it.
+  if (!ctx.group || !ctx.grade) {
+    return (
+      <section className={`${card} mx-auto mt-2.5 max-w-[560px]`}>
+        <h2 className="text-[1.6rem] font-extrabold">Hi {ctx.name} 👋</h2>
+        <p className="mt-2">Your class has not been chosen yet. Please ask your parent to choose it in their mykidzlearning account, under <b>Child settings</b>. Then your subjects will appear here.</p>
+      </section>
+    );
   }
 
   const next = ctx.nextChapter;
@@ -86,9 +90,7 @@ export default async function StudentHome({ searchParams }: { searchParams: Prom
 
       <div className="mb-3 mt-7 flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-[1.6rem] font-extrabold">Your subjects</h2>
-        <Link href="/student?setup=1" className={`${btnGhost} ${sm}`}>
-          {ctx.grade === 3 ? "Class 3" : `Class ${ctx.grade}, ${ctx.group}`}: change
-        </Link>
+        <span className="rounded-full bg-surface2 px-3 py-1 text-[0.88rem] font-bold">{ctx.grade === 3 ? "Class 3" : `Class ${ctx.grade}, ${ctx.group}`}</span>
       </div>
       <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
         {ctx.subjects.map((s) => {

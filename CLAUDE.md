@@ -21,12 +21,11 @@ the browser (localStorage) and keeps passwords in plain text. The real app must 
 - **Admin**: creates parent accounts (name, email, phone, temporary password), resets
   passwords, disables/enables/deletes parents, adds other admins, sees totals.
   There is no public sign-up.
-- **Parent**: must set their own password on first sign-in. Adds children (name, email, PIN),
+- **Parent**: must set their own password on first sign-in. Adds children (name, email, PIN, and the child's class: Class 3, or Class 11 with PCM/PCB/PCMB; changeable later in Child settings),
   sets reward milestones (points, reward, badge tier: bronze/silver/gold/diamond), approves or
   sends back notebook practice, reads written answers and AI feedback, sets per-chapter video
   links and preferred channel (default "Physics Wallah"), gives or takes bonus points.
-- **Student**: signs in with email + PIN, picks class (11; 12 "coming soon") and group
-  (PCM / PCB / PCMB), works through chapters, sees reward road and level.
+- **Student**: signs in with email + PIN. The parent chooses the class (3 or 11; 12 "coming soon") and group; the student cannot choose or change it and sees only that class's subjects. Works through chapters, sees reward road and level.
 
 A disabled parent cannot sign in, and neither can their children.
 
@@ -57,7 +56,7 @@ A disabled parent cannot sign in, and neither can their children.
 
 ## Class 3 (CBSE)
 
-- A younger child can be a Class 3 student: they pick "Class 3" in set-up (group code `C3`, no PCM/PCB choice). Subjects: Telugu (coming soon), English, Maths, EVS, Hindi (ids `c3-tel`, `c3-eng`, `c3-math`, `c3-evs`, `c3-hin`). Only the subjects that have been loaded appear. Chapters follow the school's books: Maths "Manthan" (14), EVS "New Science in Everyday Life" (14), English "Communicate with Cambridge" Level 3 (10 units; questions follow each unit's grammar, vocabulary and writing skills, with story questions only for Aladdin, Alice and Mowgli), Hindi "Madhup Hindi Pathmala" (14 lessons; grammar-based).
+- A younger child can be a Class 3 student: the parent chooses "Class 3" for them (group code `C3`, no PCM/PCB choice). Subjects: Telugu (coming soon), English, Maths, EVS, Hindi (ids `c3-tel`, `c3-eng`, `c3-math`, `c3-evs`, `c3-hin`). Only the subjects that have been loaded appear. Chapters follow the school's books: Maths "Manthan" (14), EVS "New Science in Everyday Life" (14), English "Communicate with Cambridge" Level 3 (10 units; questions follow each unit's grammar, vocabulary and writing skills, with story questions only for Aladdin, Alice and Mowgli), Hindi "Madhup Hindi Pathmala" (14 lessons; grammar-based).
 - Test = 5 multiple-choice + 5 fill-in + 5 one-line answers, relaxed 20-minute timer, in `src/lib/kidtest.ts`. One-line answers are stored as `written` questions and marked by one AI call per try (`aiGradeKid`), with a key-word fallback. Same 100%-only marking, locking of right answers, points and reward road as Class 11.
 - Level names are gentler (Explorer, Adventurer, Champion, Super Star) with the same 25/50/75% steps and multipliers.
 - Hindi chapters: children type in English letters and press space to get Hindi ("dilli " -> "दिल्ली"), with tap-to-fix suggestions and an ON/OFF switch. Built in (no outside service): `src/lib/hindi-engine.ts` (rules + phonetic keys), word list `src/lib/hindi-words.json` built by `node scripts/build-hindi-dict.mjs` from `content/class3/hindi.mjs` and `hindi-words.txt` (add everyday words there, then rebuild). Hindi fill-ins are marked forgivingly (long/short vowel signs, chandrabindu/anusvara, dots, trailing danda).
