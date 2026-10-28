@@ -11,9 +11,10 @@ type Props = {
   secret: "password" | "pin";
   action: (prev: FormState, formData: FormData) => Promise<FormState>;
   footer?: string;
+  forgotHref?: string; // adds a "Forgot password?" link
 };
 
-export function SignInForm({ title, intro, secret, action, footer }: Props) {
+export function SignInForm({ title, intro, secret, action, footer, forgotHref }: Props) {
   const [state, formAction, pending] = useActionState(action, undefined);
 
   return (
@@ -66,6 +67,11 @@ export function SignInForm({ title, intro, secret, action, footer }: Props) {
       <button type="submit" disabled={pending} className={`${btn} w-full`}>
         {pending ? "Signing in…" : secret === "pin" ? "Let’s go" : "Sign in"}
       </button>
+      {forgotHref && (
+        <Link href={forgotHref} className="text-[0.88rem] font-bold text-primary">
+          Forgot your password?
+        </Link>
+      )}
       {footer && <p className="text-[0.88rem] text-muted">{footer}</p>}
       <Link href="/" className="text-[0.88rem] text-primary">
         ← Back

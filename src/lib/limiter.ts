@@ -51,6 +51,17 @@ export const REQUEST_LIMITS = {
   perParent: { max: 5, windowSeconds: 24 * 60 * 60 },
 };
 
+// Password reset codes: asking for a code and trying one are both limited.
+export const resetIpKey = (ip: string) => `reset:ip:${sha(ip)}`;
+export const resetAskKey = (email: string) => `reset:ask:${sha(email.toLowerCase())}`;
+export const resetTryKey = (email: string) => `reset:try:${sha(email.toLowerCase())}`;
+export const RESET_LIMITS = {
+  askPerIp: { max: 5, windowSeconds: 60 * 60 },
+  askPerEmail: { max: 3, windowSeconds: 60 * 60 },
+  tryPerIp: { max: 20, windowSeconds: 60 * 60 },
+  tryPerEmail: { max: 10, windowSeconds: 60 * 60 },
+};
+
 export const SIGNIN_LIMITS = {
   perEmail: { max: 5, windowSeconds: 15 * 60 }, // matches the student PIN lock: 5 tries, 15 minutes
   perIp: { max: 60, windowSeconds: 15 * 60 }, // generous: a whole school may share one address

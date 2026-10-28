@@ -79,6 +79,7 @@ A disabled parent cannot sign in, and neither can their children.
 - Passwords and PINs are handled by Supabase Auth or stored hashed; never plain text.
 - Student PIN sign-in must be rate-limited and lock after repeated failures. Supabase passwords
   need 6+ characters, so either use 6-digit PINs or implement PIN sign-in in a server route.
+- A forgotten ADMIN password is reset with a 6-digit code emailed to the admin (`src/app/actions/password-reset.ts`, `/admin/forgot`): keyed-hash storage, 10-minute expiry, 5 tries per code, rate-limited, one newest code only, generic replies so admin emails cannot be discovered, all sessions revoked afterwards and a notice email sent. Parents are reset by an admin.
 - Admin actions (creating users, resets) run server-side with the Supabase service role key.
   The service role key must never reach the browser.
 - RLS: parents see only their own children; students see only their own data; admins see all.
