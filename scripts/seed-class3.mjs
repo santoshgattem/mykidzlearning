@@ -79,7 +79,7 @@ for (const r of loaded) {
   if (have > 0) {
     const { count: prog } = await db.from("chapter_progress").select("student_id", { count: "exact", head: true }).in("chapter_id", ids);
     if (prog > 0 && !args.includes("--wipe-progress")) { console.error(`Refusing: ${prog} progress rows on ${r.subject.id} would be deleted. Add --wipe-progress only if you really want that.`); process.exit(1); }
-    await must("clear old questions", db.from("questions").delete().in("chapter_id", ids));
+    await must("clear old questions", db.from("questions").delete().eq("set_no", 1).in("chapter_id", ids));
   }
   await must("subject", db.from("subjects").upsert(r.subject));
   await must("group_subjects", db.from("group_subjects").upsert({ grp: "C3", subject_id: r.subject.id }));

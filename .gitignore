@@ -11,3 +11,6 @@ next-env.d.ts
 
 .vercel
 .DS_Store
+
+# local tool settings (machine-specific paths)
+.claude/

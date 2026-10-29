@@ -77,14 +77,16 @@ export async function submitNotebook(chapterId: string): Promise<Result> {
 }
 
 // ---------------------------------------------------------------- step 2: the test
-export async function startTest(chapterId: string): Promise<Result> {
+export async function startTest(chapterId: string, setNo = 1): Promise<Result> {
   const user = await requireStudent();
   const { ctx, chapter } = await chapterFor(chapterId);
   if (!chapter) return fail("This chapter isn’t open yet.");
+  if (![1, 2, 3].includes(setNo) || !ctx.setsOf(chapterId).includes(setNo)) return fail("This set isn’t available yet.");
   if (!ctx.progressMap.get(chapterId)?.watched_at) return fail("Watch the lesson first. The test unlocks after the video.");
+  if (setNo > 1 && !ctx.setPassed(chapterId, setNo - 1)) return fail(`Pass Set ${setNo - 1} first.`);
   try {
-    if (isKid(ctx.grade)) await ensureKidSession(user.id, chapterId, ctx.level);
-    else await ensureSession(user.id, chapterId, ctx.level);
+    if (isKid(ctx.grade)) await ensureKidSession(user.id, chapterId, ctx.level, setNo);
+    else await ensureSession(user.id, chapterId, ctx.level, setNo);
   } catch (e) {
     return fail(e instanceof Error ? e.message : "Couldn’t start the test.");
   }

@@ -75,7 +75,7 @@ export function KidTestRunner({ initial, title, subjectColor, videoUrl, hindi: i
           if (r.status === "error") return setNotice(r.error);
           if (r.status === "done") {
             setFinished(true);
-            router.push(`/student/test/${view.chapterId}/result`);
+            router.push(`/student/test/${view.chapterId}/result${view.setNo > 1 ? `?set=${view.setNo}` : ""}`);
             return;
           }
           setView(r.view);

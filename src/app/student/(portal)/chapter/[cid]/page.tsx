@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { NotebookButton, StartTestButton, WatchStep } from "@/components/student/chapter-actions";
 import { btnGhost, card, sm, Tag } from "@/components/ui";
-import { KID_TEST, isKid, levelPoints, levelsFor, PTS, TEST, type Level } from "@/lib/learning";
+import { KID_TEST, SET_NAMES, isKid, levelPoints, levelsFor, PTS, TEST, type Level } from "@/lib/learning";
 import { createClient } from "@/lib/supabase/server";
 import { getStudentContext } from "@/lib/student";
 
@@ -20,7 +20,8 @@ export default async function ChapterPage({ params }: { params: Promise<{ cid: s
   const watched = !!p?.watched_at;
   const done = p?.completed_level ?? null;
   const nb = p?.notebook_status ?? "none";
-  const inProgress = ctx.sessionChapterId === cid;
+  const inProgress = ctx.sessionChapterId === cid && (ctx.sessionSetNo ?? 1) === 1;
+  const inProgressAny = ctx.sessionChapterId === cid;
   const url = ctx.videoUrl(chapter);
   const isSearch = url.includes("results?search_query");
 
@@ -31,6 +32,7 @@ export default async function ChapterPage({ params }: { params: Promise<{ cid: s
     .eq("chapter_id", cid)
     .order("position");
 
+  const sets = ctx.setsOf(cid);
   const here = levelPoints(ctx.level);
   const levelUp = done != null && done < ctx.level;
   const testLabel = inProgress ? "Continue test" : done != null ? (levelUp ? "Level-up test" : "Revise again") : "Start test";
@@ -67,7 +69,7 @@ export default async function ChapterPage({ params }: { params: Promise<{ cid: s
         <section className={`${card} flex items-start gap-4`}>
           {stepNum(2, done != null)}
           <div className="flex flex-1 flex-col gap-3.5">
-            <h3 className="text-[1.15rem] font-bold">Take the test</h3>
+            <h3 className="text-[1.15rem] font-bold">Take the test{sets.length > 1 ? " · Set 1" : ""}</h3>
             <p className="text-[0.88rem] text-muted">
               {kid
                 ? `${KID_TEST.mcq} pick-the-answer questions, ${KID_TEST.fib} fill in the blanks and ${KID_TEST.short} one-line answers`
@@ -83,8 +85,32 @@ export default async function ChapterPage({ params }: { params: Promise<{ cid: s
           </div>
         </section>
 
+        {sets.length > 1 && (
+          <section className={`${card} flex items-start gap-4`}>
+            {stepNum(3, ctx.passed(cid))}
+            <div className="flex flex-1 flex-col gap-3.5">
+              <h3 className="text-[1.15rem] font-bold">Harder sets</h3>
+              <p className="text-[0.88rem] text-muted">
+                This chapter has {sets.length} sets, getting harder each time. Pass every set at 100% to complete the chapter. {done != null && !ctx.passed(cid) ? "Your Set 1 result is safe; the other sets are still to do." : ""}
+              </p>
+              {sets.filter((n) => n > 1).map((n) => {
+                const ok = ctx.setPassed(cid, n);
+                const open = watched && ctx.setPassed(cid, n - 1);
+                const running = inProgressAny && ctx.sessionSetNo === n;
+                return (
+                  <div key={n} className="flex flex-wrap items-center justify-between gap-3 rounded-[18px] border-2 border-line p-3.5">
+                    <b>{SET_NAMES[n as 2 | 3]}</b>
+                    {ok ? <Tag>Passed ✓</Tag> : <StartTestButton chapterId={cid} setNo={n} label={running ? "Continue test" : "Start test"} enabled={open} />}
+                    {!ok && !open && <span className="text-[0.88rem] text-muted">Pass Set {n - 1} first.</span>}
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
         <section className={`${card} flex items-start gap-4`}>
-          {stepNum(3, nb === "approved")}
+          {stepNum(sets.length > 1 ? 4 : 3, nb === "approved")}
           <div className="flex flex-1 flex-col gap-3.5">
             <h3 className="text-[1.15rem] font-bold">Practise in your notebook</h3>
             <p className="text-[0.88rem] text-muted">

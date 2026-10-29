@@ -3,10 +3,12 @@ import { randomInt } from "node:crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { fibCorrect, gradeWritten, MIN_WORDS } from "@/lib/grading";
 import { LEVELS, TEST, levelPoints, testSeconds, TEST_GRACE_SECONDS, type Level } from "@/lib/learning";
+import { completeSet } from "@/lib/sets";
 
 // ---------------------------------------------------------------- types shared with the client
 export type TestView = {
   chapterId: string;
+  setNo: number;
   level: Level;
   levelName: string;
   points: number;
@@ -32,6 +34,7 @@ export type TestView = {
 };
 
 export type TestResult = {
+  setNo?: number;
   level: Level;
   levelName: string;
   tries: number;
@@ -46,6 +49,7 @@ type Session = {
   student_id: string;
   chapter_id: string;
   level: number;
+  set_no: number;
   question_ids: { mcq: string[]; fib: string[]; written: string };
   ok: { mcq: Record<string, boolean>; fib: Record<string, boolean>; written: boolean };
   answers: { mcq: Record<string, number>; fib: Record<string, string>; written: string };
@@ -79,15 +83,20 @@ const newDeadline = (level: number, l: ReturnType<typeof left>) => {
 // ---------------------------------------------------------------- start / resume
 // One test in progress per student. Questions come from the student's current level and are
 // topped up from lower levels, as in the prototype.
-export async function ensureSession(studentId: string, chapterId: string, level: Level) {
+export async function ensureSession(studentId: string, chapterId: string, level: Level, setNo = 1) {
   const db = createAdminClient();
-  const { data: existing } = await db.from("test_sessions").select("chapter_id").eq("student_id", studentId).maybeSingle();
-  if (existing?.chapter_id === chapterId) return;
+  const { data: existing } = await db.from("test_sessions").select("chapter_id, set_no").eq("student_id", studentId).maybeSingle();
+  if (existing?.chapter_id === chapterId && (existing.set_no ?? 1) === setNo) return;
   if (existing) await db.from("test_sessions").delete().eq("student_id", studentId);
 
-  const { data: qs } = await db.from("questions").select("id, kind, level").eq("chapter_id", chapterId).lte("level", level);
+  // Set 1 draws at the student's level, topped up from below, as always. Sets 2 and 3 are fixed in
+  // difficulty by the set itself, so they draw from all of their own questions.
+  let q = db.from("questions").select("id, kind, level").eq("chapter_id", chapterId).eq("set_no", setNo);
+  if (setNo === 1) q = q.lte("level", level);
+  const { data: qs } = await q;
   const pool = qs ?? [];
   const pick = (kind: string, n: number) => {
+    if (setNo > 1) return shuffle(pool.filter((q) => q.kind === kind)).map((q) => q.id as string).slice(0, n);
     let out: string[] = [];
     for (let l = level; l >= 1 && out.length < n; l--) {
       const ids = shuffle(pool.filter((q) => q.kind === kind && q.level === l)).map((q) => q.id as string);
@@ -106,6 +115,7 @@ export async function ensureSession(studentId: string, chapterId: string, level:
     student_id: studentId,
     chapter_id: chapterId,
     level,
+    set_no: setNo,
     question_ids: { mcq, fib, written },
     ok: base,
     answers: { mcq: {}, fib: {}, written: "" },
@@ -162,9 +172,10 @@ async function buildView(s: Session, notice = ""): Promise<TestView> {
 
   return {
     chapterId: s.chapter_id,
+    setNo: s.set_no ?? 1,
     level,
     levelName: LEVELS[level].n,
-    points: levelPoints(level),
+    points: s.set_no > 1 ? 0 : levelPoints(level),
     tries: s.tries,
     deadline: s.deadline,
     serverNow: Date.now(),
@@ -286,6 +297,13 @@ export async function submitAnswers(studentId: string, chapterId: string, input:
     return again
       ? { status: "progress", view: await buildView(again) }
       : { status: "error", error: "This test was already completed." };
+  }
+
+  if ((s.set_no ?? 1) > 1) {
+    const { data: chT } = await db.from("chapters").select("title").eq("id", chapterId).single();
+    const r = await completeSet(studentId, chapterId, s.set_no, s.level as Level, tries, chT?.title ?? chapterId);
+    const { data: st } = await db.from("students").select("points").eq("id", studentId).single();
+    return { status: "done", result: { setNo: s.set_no, level: s.level as Level, levelName: LEVELS[s.level as Level].n, tries, gained: r.gained, feedback, pointsAfter: st?.points ?? 0 } };
   }
 
   const level = s.level as Level;

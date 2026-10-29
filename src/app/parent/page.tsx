@@ -87,7 +87,7 @@ export default async function ParentPage({ searchParams }: { searchParams: Searc
   // ---- data for the selected child (all read through the parent's own session, so RLS applies)
   const [
     { data: subjects }, { data: chapters }, { data: progress }, { data: milestones },
-    { data: ledger }, { data: attempts }, { data: links }, { data: practice },
+    { data: ledger }, { data: attempts }, { data: links }, { data: practice }, { data: chSets }, { data: setRes },
   ] = await Promise.all([
     supabase.from("subjects").select("id, name, emoji, color_key, position").order("position"),
     supabase.from("chapters").select("id, subject_id, title, position").order("position"),
@@ -97,6 +97,8 @@ export default async function ParentPage({ searchParams }: { searchParams: Searc
     supabase.from("test_attempts").select("id, chapter_id, level, tries, written_answer, feedback, graded_by, created_at").eq("student_id", kid.id).order("created_at", { ascending: false }).limit(20),
     supabase.from("chapter_video_links").select("chapter_id, url").eq("student_id", kid.id),
     supabase.from("chapter_practice").select("chapter_id, position, prompt").order("position"),
+    supabase.from("chapter_sets").select("chapter_id, set_no"),
+    supabase.from("set_results").select("chapter_id, set_no").eq("student_id", kid.id),
   ]);
 
   // Question text is not readable by parents under RLS; only the written prompt is fetched here.
@@ -112,7 +114,12 @@ export default async function ParentPage({ searchParams }: { searchParams: Searc
   const known = new Set((subjects ?? []).map((x) => x.id));
   const groupSubs: readonly string[] = (kid.grp ? GROUPS[kid.grp as keyof typeof GROUPS] : []).filter((id) => known.has(id));
   const groupChapters = (chapters ?? []).filter((c) => groupSubs.includes(c.subject_id));
-  const passedIds = new Set((progress ?? []).filter((p) => p.completed_level).map((p) => p.chapter_id));
+  // A chapter counts as passed when every set that exists for it is passed (Set 1 is the original result).
+  const setDone = new Set((setRes ?? []).map((r) => `${r.chapter_id}:${r.set_no}`));
+  const set1Done = new Set((progress ?? []).filter((p) => p.completed_level).map((p) => p.chapter_id));
+  const extraSets = new Map<string, number[]>();
+  for (const r of chSets ?? []) if (r.set_no > 1) extraSets.set(r.chapter_id, [...(extraSets.get(r.chapter_id) ?? []), r.set_no]);
+  const passedIds = new Set([...set1Done].filter((id) => (extraSets.get(id) ?? []).every((n) => setDone.has(`${id}:${n}`))));
   const pct = syllabusPct(groupChapters.filter((c) => passedIds.has(c.id)).length, groupChapters.length);
   const level = levelForPct(pct);
   const badge = [...(milestones ?? [])].filter((m) => kid.points >= m.points).pop();

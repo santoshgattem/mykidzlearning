@@ -32,20 +32,22 @@ export const getStudentContext = cache(async () => {
   const user = await requireRole("student");
   const supabase = await createClient();
 
-  const [{ data: student }, { data: subjects }, { data: chapters }, { data: progress }, { data: milestones }, { data: links }] =
+  const [{ data: student }, { data: subjects }, { data: chapters }, { data: progress }, { data: milestones }, { data: links }, { data: setRows }, { data: setResults }] =
     await Promise.all([
-      supabase.from("students").select("id, grade, grp, points, preferred_channel").eq("id", user.id).single(),
+      supabase.from("students").select("id, grade, grp, points, preferred_channel, level_reached").eq("id", user.id).single(),
       supabase.from("subjects").select("id, name, emoji, color_key, position").order("position"),
       supabase.from("chapters").select("id, subject_id, title, position, default_video_url").order("position"),
       supabase.from("chapter_progress").select("chapter_id, watched_at, completed_level, completed_points, notebook_status").eq("student_id", user.id),
       supabase.from("milestones").select("id, points, reward, tier, given_at, celebrated_at").eq("student_id", user.id).order("points"),
       supabase.from("chapter_video_links").select("chapter_id, url").eq("student_id", user.id),
+      supabase.from("chapter_sets").select("chapter_id, set_no"),
+      supabase.from("set_results").select("chapter_id, set_no").eq("student_id", user.id),
     ]);
 
   // The test in progress is server-only data, so it is read with the service role (own id only).
   const { data: session } = await createAdminClient()
     .from("test_sessions")
-    .select("chapter_id")
+    .select("chapter_id, set_no")
     .eq("student_id", user.id)
     .maybeSingle();
 
@@ -59,10 +61,25 @@ export const getStudentContext = cache(async () => {
   const myChapters = allChapters.filter((c) => mySubjects.some((s) => s.id === c.subject_id));
   const chaptersOf = (sid: string) => myChapters.filter((c) => c.subject_id === sid).sort((a, b) => a.position - b.position);
 
-  const passed = (id: string) => progressMap.get(id)?.completed_level != null;
+  // Sets. Every chapter has Set 1; Sets 2 and 3 exist only once their questions are written.
+  const setsByChapter = new Map<string, number[]>();
+  for (const r of setRows ?? []) setsByChapter.set(r.chapter_id, [...(setsByChapter.get(r.chapter_id) ?? []), r.set_no].sort());
+  const setsOf = (id: string) => setsByChapter.get(id) ?? [1];
+  const resultKeys = new Set((setResults ?? []).map((r) => `${r.chapter_id}:${r.set_no}`));
+  // Set 1 is recorded as the chapter's completion (as it always has been); Sets 2 and 3 in set_results.
+  const setPassed = (id: string, n: number) => (n === 1 ? progressMap.get(id)?.completed_level != null : resultKeys.has(`${id}:${n}`));
+  const setsPassedCount = (id: string) => setsOf(id).filter((n) => setPassed(id, n)).length;
+  // A chapter is complete when every set that exists for it is passed.
+  const passed = (id: string) => setsOf(id).every((n) => setPassed(id, n));
   const doneCount = myChapters.filter((c) => passed(c.id)).length;
   const pct = syllabusPct(doneCount, myChapters.length);
-  const level = levelForPct(pct) as Level;
+  // Level follows syllabus completion, but never drops: adding sets must not lower anyone's level.
+  const computedLevel = levelForPct(pct) as Level;
+  const reached = (student?.level_reached ?? 1) as Level;
+  const level = Math.max(computedLevel, reached) as Level;
+  if (computedLevel > reached) {
+    void createAdminClient().from("students").update({ level_reached: computedLevel }).eq("id", user.id).then(() => undefined);
+  }
 
   // Every chapter in the student's group is open, in any order and any subject.
   // Server actions and pages still check this, so a chapter outside the group stays closed.
@@ -97,6 +114,9 @@ export const getStudentContext = cache(async () => {
     chaptersOf,
     progressMap,
     passed,
+    setsOf,
+    setPassed,
+    setsPassedCount,
     unlocked,
     pct,
     level,
@@ -106,6 +126,7 @@ export const getStudentContext = cache(async () => {
     videoUrl,
     subjectOf,
     sessionChapterId: (session?.chapter_id ?? null) as string | null,
+    sessionSetNo: (session?.set_no ?? 1) as number,
     toCelebrate: ms.filter((m) => points >= m.points && !m.celebrated_at),
   };
 });

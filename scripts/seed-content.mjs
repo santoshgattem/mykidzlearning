@@ -174,7 +174,7 @@ if (only) {
   if (have > 0) {
     const { count: prog } = await db.from("chapter_progress").select("student_id", { count: "exact", head: true }).in("chapter_id", [...mine]);
     if (prog > 0 && !process.argv.includes("--wipe-progress")) { console.error(`Refusing: ${prog} progress rows on ${only} chapters would be deleted. Add --wipe-progress only if you really want that.`); process.exit(1); }
-    await must("clear old questions", db.from("questions").delete().in("chapter_id", [...mine]));
+    await must("clear old questions", db.from("questions").delete().eq("set_no", 1).in("chapter_id", [...mine]));
   }
   await must("subject", db.from("subjects").upsert(subjects.filter((x) => x.id === only)));
   await must("group_subjects", db.from("group_subjects").upsert(Object.entries(GROUPS).filter(([, subs]) => subs.includes(only)).map(([grp]) => ({ grp, subject_id: only }))));

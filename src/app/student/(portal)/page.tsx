@@ -23,12 +23,13 @@ export default async function StudentHome() {
   const next = ctx.nextChapter;
 
   // Tests passed at 100% since Monday, read through the student's own session.
-  const { count: weekDone } = await (await createClient())
-    .from("test_attempts")
-    .select("id", { count: "exact", head: true })
-    .eq("student_id", ctx.user.id)
-    .gte("created_at", weekStart().toISOString());
-  const done = weekDone ?? 0;
+  const sb = await createClient();
+  const since = weekStart().toISOString();
+  const [{ count: weekDone }, { count: weekSets }] = await Promise.all([
+    sb.from("test_attempts").select("id", { count: "exact", head: true }).eq("student_id", ctx.user.id).gte("created_at", since),
+    sb.from("set_results").select("student_id", { count: "exact", head: true }).eq("student_id", ctx.user.id).gte("completed_at", since),
+  ]);
+  const done = (weekDone ?? 0) + (weekSets ?? 0);
 
   return (
     <>

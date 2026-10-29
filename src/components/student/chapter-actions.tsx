@@ -42,7 +42,7 @@ export function WatchStep({ chapterId, url, watched }: { chapterId: string; url:
   );
 }
 
-export function StartTestButton({ chapterId, label, enabled }: { chapterId: string; label: string; enabled: boolean }) {
+export function StartTestButton({ chapterId, label, enabled, setNo = 1 }: { chapterId: string; label: string; enabled: boolean; setNo?: number }) {
   const router = useRouter();
   const [error, setError] = useState("");
   const [pending, start] = useTransition();
@@ -53,7 +53,7 @@ export function StartTestButton({ chapterId, label, enabled }: { chapterId: stri
         disabled={!enabled || pending}
         onClick={() =>
           start(async () => {
-            const r = await startTest(chapterId);
+            const r = await startTest(chapterId, setNo);
             if (!r.ok) return setError(r.error);
             router.push(`/student/test/${chapterId}`);
           })

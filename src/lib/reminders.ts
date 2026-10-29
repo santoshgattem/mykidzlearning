@@ -67,7 +67,10 @@ export async function runReminders(kind: ReminderKind, only?: string | null) {
     const { count } = await db
       .from("test_attempts").select("id", { count: "exact", head: true })
       .eq("student_id", k.id).gte("created_at", start.toISOString());
-    const done = count ?? 0;
+    const { count: setCount } = await db
+      .from("set_results").select("student_id", { count: "exact", head: true })
+      .eq("student_id", k.id).gte("completed_at", start.toISOString());
+    const done = (count ?? 0) + (setCount ?? 0);
     if (done >= threshold) { skipped++; continue; }
 
     // Claim this week and kind first, so two overlapping runs cannot both send.
