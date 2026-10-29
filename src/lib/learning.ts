@@ -108,4 +108,4 @@ export const PAPER = {
 // points exactly as before. Sets 2 and 3 pay nothing extra for now (change here, with the owner's approval).
 export const SET_NAMES = { 1: "Set 1 · Simple", 2: "Set 2 · Medium", 3: "Set 3 · Complex" } as const;
 export type SetNo = 1 | 2 | 3;
-export const SET_BONUS_FACTOR = 0; // Sets 2 and 3: this share of the chapter points, once per set
+export const SET_BONUS_FACTOR = 1; // Sets 2 and 3 each earn this share of the chapter points (at the student's level), once per set

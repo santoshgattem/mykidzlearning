@@ -2,7 +2,7 @@ import "server-only";
 import { randomInt } from "node:crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { fibCorrect, gradeWritten, MIN_WORDS } from "@/lib/grading";
-import { LEVELS, TEST, levelPoints, testSeconds, TEST_GRACE_SECONDS, type Level } from "@/lib/learning";
+import { LEVELS, SET_BONUS_FACTOR, TEST, levelPoints, testSeconds, TEST_GRACE_SECONDS, type Level } from "@/lib/learning";
 import { completeSet } from "@/lib/sets";
 
 // ---------------------------------------------------------------- types shared with the client
@@ -175,7 +175,7 @@ async function buildView(s: Session, notice = ""): Promise<TestView> {
     setNo: s.set_no ?? 1,
     level,
     levelName: LEVELS[level].n,
-    points: s.set_no > 1 ? 0 : levelPoints(level),
+    points: s.set_no > 1 ? Math.round(levelPoints(level) * SET_BONUS_FACTOR) : levelPoints(level),
     tries: s.tries,
     deadline: s.deadline,
     serverNow: Date.now(),

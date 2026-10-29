@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { btn, btnSoft } from "@/components/ui";
 import { SET_NAMES, fmt, levelName } from "@/lib/learning";
 import { getStudentContext } from "@/lib/student";
+import { createClient } from "@/lib/supabase/server";
 import { latestResult } from "@/lib/test";
 
 // Shown after a test reaches 100%. Reloading keeps showing it for an hour.
@@ -14,6 +15,8 @@ export default async function ResultPage({ params, searchParams }: { params: Pro
   if (!chapter) notFound();
   if (setNo > 1) {
     if (setNo > 3 || !ctx.setPassed(cid, setNo)) redirect(`/student/chapter/${cid}`);
+    const { data: sr } = await (await createClient()).from("set_results").select("points_awarded").eq("student_id", ctx.user.id).eq("chapter_id", cid).eq("set_no", setNo).maybeSingle();
+    const gain = sr?.points_awarded ?? 0;
     const more = ctx.setsOf(cid).includes(setNo + 1);
     return (
       <div>
@@ -24,6 +27,7 @@ export default async function ResultPage({ params, searchParams }: { params: Pro
           <div className="font-display text-[clamp(2.4rem,8vw,3.6rem)] font-extrabold leading-none">100% 🎉</div>
           <h2 className="mt-2.5 text-[1.6rem] font-extrabold text-white">{chapter.title}: {SET_NAMES[setNo as 2 | 3]} passed</h2>
           <p className="mt-2">Every answer right. That is how real understanding is built.</p>
+          <p className="mt-1.5 font-bold">{gain > 0 ? `+${fmt(gain)} points added.` : ""}</p>
         </section>
         <div className="mt-4 flex flex-wrap gap-3">
           <Link href={`/student/chapter/${cid}`} className={btn}>{more ? `On to Set ${setNo + 1}` : "Back to chapter"}</Link>

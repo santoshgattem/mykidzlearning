@@ -5,7 +5,7 @@ import { fibCorrect, norm } from "@/lib/grading";
 import { hindiMatch, hindiNorm } from "@/lib/hindi-engine";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { completeSet } from "@/lib/sets";
-import { KID_TEST, TEST_GRACE_SECONDS, KID_LEVELS, levelPoints, type Level } from "@/lib/learning";
+import { KID_TEST, SET_BONUS_FACTOR, TEST_GRACE_SECONDS, KID_LEVELS, levelPoints, type Level } from "@/lib/learning";
 
 // The Class 3 test: 5 multiple-choice, 5 fill-in-the-blanks and 5 one-line answers. It follows the
 // same rules as the Class 11 test (marks only at 100%, correct answers stay locked in, the child only
@@ -115,7 +115,7 @@ async function buildView(s: Session, notice = ""): Promise<KidView> {
   }));
   const right = [...mcq, ...fib, ...short].filter((q) => q.ok).length;
   return {
-    chapterId: s.chapter_id, level, levelName: KID_LEVELS[level].n, points: s.set_no > 1 ? 0 : levelPoints(level), setNo: s.set_no ?? 1,
+    chapterId: s.chapter_id, level, levelName: KID_LEVELS[level].n, points: s.set_no > 1 ? Math.round(levelPoints(level) * SET_BONUS_FACTOR) : levelPoints(level), setNo: s.set_no ?? 1,
     tries: s.tries, deadline: s.deadline, serverNow: Date.now(), limitSeconds: s.limit_seconds,
     notice, right, total: mcq.length + fib.length + short.length, mcq, fib, short,
   };
