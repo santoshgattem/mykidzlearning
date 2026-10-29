@@ -62,6 +62,12 @@ A disabled parent cannot sign in, and neither can their children.
 - Hindi chapters: children type in English letters and press space to get Hindi ("dilli " -> "दिल्ली"), with tap-to-fix suggestions and an ON/OFF switch. Built in (no outside service): `src/lib/hindi-engine.ts` (rules + phonetic keys), word list `src/lib/hindi-words.json` built by `node scripts/build-hindi-dict.mjs` from `content/class3/hindi.mjs` and `hindi-words.txt` (add everyday words there, then rebuild). Hindi fill-ins are marked forgivingly (long/short vowel signs, chandrabindu/anusvara, dots, trailing danda).
 - No JEE papers for Class 3. Content is in `content/class3/`; load with `npm run seed-class3` (`-- --only c3-math`, `--dry`, `--force` to replace).
 
+## Question sets (Set 1 / 2 / 3)
+
+- Every chapter has Set 1 (Simple: the original questions), and may have Set 2 (Medium) and Set 3 (Complex). `questions.set_no`; `chapter_sets` lists which sets exist for a chapter. A chapter is complete only when every set that exists for it is passed; chapters with no Set 2/3 yet behave as before. Existing completions count as Set 1 passed, no points or results are ever deleted, and a student's level never drops (`students.level_reached`).
+- Set 2 unlocks after Set 1 is passed, Set 3 after Set 2. Same test format, 100% rule and locking as Set 1. Sets 2 and 3 draw from their own questions whatever the student's level. Passing one earns the chapter's points at the student's level (`SET_BONUS_FACTOR` = 1 in `src/lib/learning.ts`), once per set; a repeat earns nothing (`set_results`, `src/lib/sets.ts`). Set passes also count toward the weekly goal of 5 and the reminder emails.
+- Load sets with `npm run seed-class3-sets` (files in `content/class3/sets/`, validates, never touches Set 1; `--force` replaces the named sets). Class 3 Maths Sets 2 and 3 are loaded; the other subjects and Class 11 are still to write. Seeding Set 1 with `--force` deletes only `set_no = 1`.
+
 ## AI grading (server only)
 
 - Route: `POST /api/grade` with `{subject, chapter, level, question, keyIdeas, minWords, answer}`

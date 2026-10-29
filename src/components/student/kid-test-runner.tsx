@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { submitKidTest } from "@/app/student/actions";
 import { btn, btnSoft, input } from "@/components/ui";
-import { fmt } from "@/lib/learning";
+import { SET_NAMES, fmt } from "@/lib/learning";
 import { HindiInput } from "@/components/student/hindi-input";
 import { hindi, finalizeHindi } from "@/lib/hindi";
 import type { KidView } from "@/lib/kidtest";
@@ -120,7 +120,7 @@ export function KidTestRunner({ initial, title, subjectColor, videoUrl, hindi: i
     <div className="text-[1.05rem]">
       <Link href={`/student/chapter/${view.chapterId}`} className={`${btnSoft} !px-3 !py-[7px] !text-[0.9rem]`}>← Back to chapter</Link>
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-[1.7rem] font-extrabold">{title}</h2>
+        <h2 className="text-[1.7rem] font-extrabold">{title}{view.setNo > 1 ? ` · ${SET_NAMES[view.setNo as 2 | 3]}` : ""}</h2>
         <span role="timer" aria-label={`Time left ${mmss(secs)}`} className={`rounded-full border-2 px-3 py-1 font-display text-[1.1rem] font-extrabold tabular-nums ${secs <= 60 ? "border-bad text-bad" : "border-line"}`}>
           ⏱ {mmss(secs)}
         </span>

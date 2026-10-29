@@ -50,7 +50,7 @@ export default async function ChapterPage({ params }: { params: Promise<{ cid: s
       </Link>
       <h2 className="mb-1 mt-4 text-[1.6rem] font-extrabold">{chapter.title}</h2>
       <p className="mb-5 text-muted">
-        {subject?.emoji} {subject?.name}, Class 11
+        {subject?.emoji} {subject?.name}, Class {ctx.grade}
       </p>
 
       <div className="grid gap-3.5">
@@ -101,7 +101,7 @@ export default async function ChapterPage({ params }: { params: Promise<{ cid: s
                   <div key={n} className="flex flex-wrap items-center justify-between gap-3 rounded-[18px] border-2 border-line p-3.5">
                     <b>{SET_NAMES[n as 2 | 3]}</b>
                     {ok ? <Tag>Passed ✓</Tag> : <StartTestButton chapterId={cid} setNo={n} label={running ? "Continue test" : "Start test"} enabled={open} />}
-                    {!ok && !open && <span className="text-[0.88rem] text-muted">Pass Set {n - 1} first.</span>}
+                    {!ok && watched && !open && <span className="text-[0.88rem] text-muted">Pass Set {n - 1} first.</span>}
                   </div>
                 );
               })}

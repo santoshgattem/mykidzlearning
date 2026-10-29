@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { submitTest } from "@/app/student/actions";
 import { btn, btnSoft, errorText, input, Tag } from "@/components/ui";
-import { fmt } from "@/lib/learning";
+import { SET_NAMES, fmt } from "@/lib/learning";
 import type { TestView } from "@/lib/test";
 
 type Props = {
@@ -133,7 +133,7 @@ export function TestRunner({ initial, title, subjectColor, videoUrl, googleUrl }
       </Link>
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-[1.6rem] font-extrabold">{title}: test</h2>
+        <h2 className="text-[1.6rem] font-extrabold">{title}: test{view.setNo > 1 ? ` · ${SET_NAMES[view.setNo as 2 | 3]}` : ""}</h2>
         <div className="flex items-center gap-2">
           <Tag>
             Level {view.level}: {view.levelName}
