@@ -12,6 +12,7 @@
     "seed-papers": "node --env-file=.env.local scripts/seed-papers.mjs",
     "seed-class3": "node --env-file=.env.local scripts/seed-class3.mjs",
     "seed-class3-sets": "node --env-file=.env.local scripts/seed-class3-sets.mjs",
+    "seed-class11-sets": "node --env-file=.env.local scripts/seed-class11-sets.mjs",
     "seed-news": "node --env-file=.env.local scripts/seed-news.mjs"
   },
   "dependencies": {

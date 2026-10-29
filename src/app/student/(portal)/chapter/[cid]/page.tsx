@@ -101,7 +101,7 @@ export default async function ChapterPage({ params }: { params: Promise<{ cid: s
                   <div key={n} className="flex flex-wrap items-center justify-between gap-3 rounded-[18px] border-2 border-line p-3.5">
                     <b>{SET_NAMES[n as 2 | 3]}</b>
                     {ok ? <Tag>Passed ✓</Tag> : <StartTestButton chapterId={cid} setNo={n} label={running ? "Continue test" : "Start test"} enabled={open} />}
-                    {!ok && watched && !open && <span className="text-[0.88rem] text-muted">Pass Set {n - 1} first.</span>}
+                    
                   </div>
                 );
               })}

@@ -61,7 +61,7 @@ export function StartTestButton({ chapterId, label, enabled, setNo = 1 }: { chap
       >
         {pending ? "Preparing your test…" : label}
       </button>
-      {!enabled && <span className="text-[0.88rem] text-muted">Unlocks after the video</span>}
+      {!enabled && <span className="text-[0.88rem] text-muted">{setNo > 1 ? `Pass Set ${setNo - 1} first` : "Unlocks after the video"}</span>}
       <span role="alert" className={errorText}>
         {error}
       </span>
