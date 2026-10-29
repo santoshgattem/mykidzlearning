@@ -106,6 +106,6 @@ export const PAPER = {
 // ---- Question sets. Each chapter has up to 3 sets, rising in difficulty. A chapter is complete when
 // every set that exists for it has been passed at 100%. Set 1 is the original test and pays the chapter
 // points exactly as before. Sets 2 and 3 pay nothing extra for now (change here, with the owner's approval).
-export const SET_NAMES = { 1: "Set 1 · Simple", 2: "Set 2 · Medium", 3: "Set 3 · Complex" } as const;
+export const SET_NAMES = { 1: "Set 1", 2: "Set 2", 3: "Set 3" } as const;
 export type SetNo = 1 | 2 | 3;
 export const SET_BONUS_FACTOR = 1; // Sets 2 and 3 each earn this share of the chapter points (at the student's level), once per set

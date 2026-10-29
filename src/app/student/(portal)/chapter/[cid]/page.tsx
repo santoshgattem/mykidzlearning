@@ -89,9 +89,9 @@ export default async function ChapterPage({ params }: { params: Promise<{ cid: s
           <section className={`${card} flex items-start gap-4`}>
             {stepNum(3, ctx.passed(cid))}
             <div className="flex flex-1 flex-col gap-3.5">
-              <h3 className="text-[1.15rem] font-bold">Harder sets</h3>
+              <h3 className="text-[1.15rem] font-bold">More tests</h3>
               <p className="text-[0.88rem] text-muted">
-                This chapter has {sets.length} sets, getting harder each time. Pass every set at 100% to complete the chapter. {done != null && !ctx.passed(cid) ? "Your Set 1 result is safe; the other sets are still to do." : ""}
+                This chapter has {sets.length} sets. Pass every set at 100% to complete the chapter. {done != null && !ctx.passed(cid) ? "Your Set 1 result is safe; the other sets are still to do." : ""}
               </p>
               {sets.filter((n) => n > 1).map((n) => {
                 const ok = ctx.setPassed(cid, n);

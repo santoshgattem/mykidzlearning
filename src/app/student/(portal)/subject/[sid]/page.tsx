@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { btnGhost, sm } from "@/components/ui";
-import { levelsFor, type Level } from "@/lib/learning";
+import { StartTestButton } from "@/components/student/chapter-actions";
+import { btnGhost, sm, Tag } from "@/components/ui";
+import { SET_NAMES, levelsFor, type Level } from "@/lib/learning";
 import { getStudentContext } from "@/lib/student";
 
 export default async function SubjectPage({ params }: { params: Promise<{ sid: string }> }) {
@@ -33,6 +34,8 @@ export default async function SubjectPage({ params }: { params: Promise<{ sid: s
           const done = p?.completed_level != null;
           const note = !open
             ? "Locked. Pass the previous chapter first."
+            : done && !ctx.passed(c.id)
+              ? `${ctx.setsPassedCount(c.id)} of ${ctx.setsOf(c.id).length} sets passed`
             : done
               ? `Completed 100% at ${LEVELS[p!.completed_level as Level].n} level`
               : p?.watched_at
@@ -57,10 +60,41 @@ export default async function SubjectPage({ params }: { params: Promise<{ sid: s
                   {i + 1}
                 </span>
               )}
-              <div className="flex-1 rounded-[18px] border-2 border-line bg-surface px-4 py-3">
-                <b>{c.title}</b>
-                <div className="text-[0.88rem] text-muted">{note}</div>
-              </div>
+              <details className="group flex-1 rounded-[18px] border-2 border-line bg-surface">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 [&::-webkit-details-marker]:hidden">
+                  <div>
+                    <b>{c.title}</b>
+                    <div className="text-[0.88rem] text-muted">{note}</div>
+                  </div>
+                  <span aria-hidden className="text-muted transition-transform group-open:rotate-180">▾</span>
+                </summary>
+                <div className="grid gap-2.5 border-t-2 border-line px-4 py-3">
+                  {open ? (
+                    <>
+                      {ctx.setsOf(c.id).map((n) => {
+                        const ok = ctx.setPassed(c.id, n);
+                        const running = ctx.sessionChapterId === c.id && (ctx.sessionSetNo ?? 1) === n;
+                        const ready = !!p?.watched_at && (n === 1 || ctx.setPassed(c.id, n - 1));
+                        return (
+                          <div key={n} className="flex flex-wrap items-center justify-between gap-3">
+                            <b>{SET_NAMES[n as 1 | 2 | 3]}</b>
+                            {ok ? (
+                              <Tag>Passed ✓</Tag>
+                            ) : (
+                              <StartTestButton chapterId={c.id} setNo={n} label={running ? "Continue test" : "Start test"} enabled={ready} />
+                            )}
+                          </div>
+                        );
+                      })}
+                      <Link href={`/student/chapter/${c.id}`} className="text-[0.88rem] font-bold">
+                        Video and notebook practice →
+                      </Link>
+                    </>
+                  ) : (
+                    <span className="text-[0.88rem] text-muted">Locked. Pass the previous chapter first.</span>
+                  )}
+                </div>
+              </details>
             </li>
           );
         })}
