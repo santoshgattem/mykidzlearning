@@ -42,7 +42,7 @@ export function WatchStep({ chapterId, url, watched }: { chapterId: string; url:
   );
 }
 
-export function StartTestButton({ chapterId, label, enabled, setNo = 1 }: { chapterId: string; label: string; enabled: boolean; setNo?: number }) {
+export function StartTestButton({ chapterId, label, enabled, setNo = 1, hideHint = false }: { chapterId: string; label: string; enabled: boolean; setNo?: number; hideHint?: boolean }) {
   const router = useRouter();
   const [error, setError] = useState("");
   const [pending, start] = useTransition();
@@ -61,7 +61,7 @@ export function StartTestButton({ chapterId, label, enabled, setNo = 1 }: { chap
       >
         {pending ? "Preparing your test…" : label}
       </button>
-      {!enabled && <span className="text-[0.88rem] text-muted">{setNo > 1 ? `Pass Set ${setNo - 1} first` : "Unlocks after the video"}</span>}
+      {!enabled && !hideHint && <span className="text-[0.88rem] text-muted">{setNo > 1 ? `Pass Set ${setNo - 1} first` : "Unlocks after the video"}</span>}
       <span role="alert" className={errorText}>
         {error}
       </span>

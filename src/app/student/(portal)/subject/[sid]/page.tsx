@@ -79,12 +79,13 @@ export default async function SubjectPage({ params }: { params: Promise<{ sid: s
                         const running = ctx.sessionChapterId === c.id && (ctx.sessionSetNo ?? 1) === n;
                         const ready = !!p?.watched_at && (n === 1 || ctx.setPassed(c.id, n - 1));
                         return (
-                          <div key={n} className="flex flex-wrap items-center justify-between gap-3">
+                          <div key={n} className="grid grid-cols-[3.25rem_1fr_auto] items-center gap-2">
                             <b>{SET_NAMES[n as 1 | 2 | 3]}</b>
+                            <span className="whitespace-nowrap text-[0.85rem] text-muted">{!ok && !ready ? (n === 1 || !p?.watched_at ? "Watch the video first" : `Pass Set ${n - 1} first`) : ""}</span>
                             {ok ? (
                               <Tag>Passed ✓</Tag>
                             ) : (
-                              <StartTestButton chapterId={c.id} setNo={n} label={running ? "Continue test" : "Start test"} enabled={ready} />
+                              <StartTestButton chapterId={c.id} setNo={n} label={running ? "Continue test" : "Start test"} enabled={ready} hideHint />
                             )}
                           </div>
                         );
