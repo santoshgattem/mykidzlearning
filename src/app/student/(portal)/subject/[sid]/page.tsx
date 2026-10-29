@@ -32,6 +32,8 @@ export default async function SubjectPage({ params }: { params: Promise<{ sid: s
           const open = ctx.unlocked(c);
           const p = ctx.progressMap.get(c.id);
           const done = p?.completed_level != null;
+          // Share of this chapter's sets passed: the number circle fills with green as sets are passed.
+          const share = ctx.setsPassedCount(c.id) / ctx.setsOf(c.id).length;
           const note = !open
             ? "Locked. Pass the previous chapter first."
             : done && !ctx.passed(c.id)
@@ -48,9 +50,10 @@ export default async function SubjectPage({ params }: { params: Promise<{ sid: s
                   href={`/student/chapter/${c.id}`}
                   aria-label={`Chapter ${i + 1}: ${c.title}`}
                   className="grid size-16 flex-none place-items-center rounded-full font-display text-[1.4rem] font-extrabold text-white no-underline"
-                  style={{ background: color }}
+                  style={{ background: share >= 1 ? "var(--good)" : share > 0 ? `conic-gradient(var(--good) ${Math.round(share * 100)}%, ${color} 0)` : color }}
+                  title={share >= 1 ? "All sets passed" : share > 0 ? `${ctx.setsPassedCount(c.id)} of ${ctx.setsOf(c.id).length} sets passed` : undefined}
                 >
-                  {done ? "✓" : i + 1}
+                  {share >= 1 ? "✓" : i + 1}
                 </Link>
               ) : (
                 <span
