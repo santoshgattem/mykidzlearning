@@ -1,8 +1,15 @@
 // Builds src/lib/hindi-words.json: every Hindi word in the Class 3 Hindi content, most common first,
 // followed by a list of everyday words children use. Run after changing content/class3/hindi.mjs.
 //   node scripts/build-hindi-dict.mjs
-import { readFileSync, writeFileSync } from "node:fs";
-import { chapters } from "../content/class3/hindi.mjs";
+import { readFileSync, writeFileSync, readdirSync } from "node:fs";
+import { chapters as set1 } from "../content/class3/hindi.mjs";
+
+// Sets 2 and 3 (content/class3/sets/hindi-set*.mjs) add their words too.
+const sets = [];
+for (const f of readdirSync(new URL("../content/class3/sets/", import.meta.url)).filter((x) => x.startsWith("hindi-set") && x.endsWith(".mjs"))) {
+  sets.push(...(await import(new URL(`../content/class3/sets/${f}`, import.meta.url))).chapters);
+}
+const chapters = [...set1, ...sets];
 
 const count = new Map();
 const add = (text) => {
