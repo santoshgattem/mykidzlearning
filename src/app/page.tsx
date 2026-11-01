@@ -61,7 +61,7 @@ export default async function Home() {
         <section className="grid items-center gap-7 pt-7 md:grid-cols-[1.2fr_1fr]">
           <div>
             <h1 className="font-display text-[clamp(2rem,6vw,3.4rem)] font-extrabold tracking-tight">
-              Learning is a journey. Every assessment is a step toward a successful life.
+              Learning is a journey: each lesson is a step, each test is progress, and the road leads to a better future.
             </h1>
             <p className="mt-3.5 max-w-[46ch] text-[1.15rem] text-muted">
               Watch the lesson, pass the test and practise in the notebook. Build knowledge and
