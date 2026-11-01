@@ -1,5 +1,6 @@
 "use server";
 
+import { BLOCKED_MESSAGE, hasBlockedWord } from "@/lib/contact-block";
 import { allowAttempts, clientIp, CONTACT_LIMITS, contactEmailKey, contactIpKey } from "@/lib/limiter";
 import { esc, mailConfigured, sendMail } from "@/lib/mail";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -24,6 +25,7 @@ export async function sendContactMessage(_prev: ContactState, form: FormData): P
   if (!name) return { ok: false, error: "Please enter your name." };
   if (!validEmail(email)) return { ok: false, error: "Please enter a valid email address so the admin can reply." };
   if (message.length < 5) return { ok: false, error: "Please write your message." };
+  if (hasBlockedWord(message)) return { ok: false, error: BLOCKED_MESSAGE };
 
   const ok = await allowAttempts([
     { key: contactIpKey(await clientIp()), ...CONTACT_LIMITS.perIp },
