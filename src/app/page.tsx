@@ -22,19 +22,6 @@ async function loadSlides(): Promise<Slide[]> {
   }
 }
 
-const LADDER = [
-  { tier: "bronze", icon: "🥉", name: "Bronze", pts: "1,000 pts", reward: "₹100 pocket money for every 1,000 pts" },
-  { tier: "silver", icon: "🥈", name: "Silver", pts: "10,000 pts", reward: "Gift of their choice" },
-  { tier: "gold", icon: "🥇", name: "Gold", pts: "50,000 pts", reward: "Wireless headphones" },
-  { tier: "diamond", icon: "💎", name: "Diamond", pts: "1,00,000 pts", reward: "New mobile phone" },
-] as const;
-
-const TIER_BG = {
-  bronze: "bg-bronze",
-  silver: "bg-silver",
-  gold: "bg-gold",
-  diamond: "bg-diamond",
-} as const;
 
 export default async function Home() {
   const slides = await loadSlides();
@@ -58,14 +45,14 @@ export default async function Home() {
       </header>
 
       <main className="mx-auto max-w-[1100px] px-5 py-5">
-        <section className="grid items-center gap-7 pt-7 md:grid-cols-[1.2fr_1fr]">
+        <section className="pt-7">
           <div>
             <h1 className="font-display text-[clamp(2rem,6vw,3.4rem)] font-extrabold tracking-tight">
               Learning is a journey. Every assessment is a step toward a successful life.
             </h1>
             <p className="mt-3.5 max-w-[46ch] text-[1.15rem] text-muted">
               Watch the lesson, pass the test and practise in the notebook. Build knowledge and
-              habits that last, and let small rewards celebrate each step along the way.
+              habits that last, one chapter at a time.
             </p>
             <div className="mt-6 grid max-w-[520px] grid-cols-2 gap-3.5">
               <Link href="/parent/login" className={`${btn} !p-4`}>
@@ -77,27 +64,6 @@ export default async function Home() {
             </div>
           </div>
 
-          <div className="grid gap-2.5">
-            {LADDER.map((r) => (
-              <div
-                key={r.tier}
-                className="flex items-center gap-3.5 rounded-[18px] border-2 border-line bg-surface px-4 py-3.5"
-              >
-                <div
-                  className={`grid size-[46px] flex-none place-items-center rounded-full text-[1.4rem] text-white ${TIER_BG[r.tier]}`}
-                >
-                  {r.icon}
-                </div>
-                <div>
-                  <b>
-                    {r.name}, {r.pts}
-                  </b>
-                  <div className="text-sm text-muted">{r.reward}</div>
-                </div>
-              </div>
-            ))}
-            <p className="text-sm text-muted">Little celebrations along the way. Parents set the points and rewards; these are examples.</p>
-          </div>
         </section>
 
         {slides.length > 0 && (

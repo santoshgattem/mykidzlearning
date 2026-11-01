@@ -21,7 +21,7 @@ import { NavProgress } from "@/components/nav-progress";
 export const metadata: Metadata = {
   title: "mykidzlearning – learning is a journey",
   description:
-    "Watch the lesson, pass the test and practise in the notebook. Learning is a journey to a successful life, and small rewards celebrate the steps along the way.",
+    "Watch the lesson, pass the test and practise in the notebook. Learning is a journey to a successful life.",
 };
 
 export const viewport: Viewport = {
