@@ -100,6 +100,19 @@ export default async function Home() {
           </div>
         </section>
 
+        <section className="mt-12" aria-labelledby="guide">
+          <h2 id="guide" className="font-display text-[clamp(1.5rem,4vw,2.2rem)] font-extrabold tracking-tight">See how it works</h2>
+          <p className="mb-4 mt-1 max-w-[60ch] text-muted">A short video guide for parents: create your account, set up your child and rewards, and see how your child uses the portal.</p>
+          <video
+            className="aspect-video w-full max-w-[860px] rounded-[22px] border-2 border-line bg-black"
+            controls
+            preload="metadata"
+            poster="/parent-guide-poster.jpg"
+            src="/parent-guide.mp4"
+            aria-label="Parent guide video"
+          />
+        </section>
+
         {slides.length > 0 && (
           <section className="mt-12" aria-labelledby="inspire">
             <h2 id="inspire" className="font-display text-[clamp(1.5rem,4vw,2.2rem)] font-extrabold tracking-tight">Be inspired</h2>

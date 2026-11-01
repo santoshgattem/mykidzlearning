@@ -101,6 +101,10 @@ A disabled parent cannot sign in, and neither can their children.
 
 - A public "Contact the admin" form on the main page (header link "Contact admin" jumps to it). Messages are stored in `contact_messages` (server-only), the admins are emailed, and the admin portal has a Messages tab (reply by email, mark done, delete). Honeypot field plus limits: 5 an hour per address, 3 a day per email. No admin email address is published on the page.
 
+## Home page: parent guide video
+
+- "See how it works" on the main page plays `public/parent-guide.mp4` (poster `public/parent-guide-poster.jpg`), a narrated walk-through for parents. Source files, screenshots and captioned slides are in `docs/parent-guide/`; copy a re-made video over `public/parent-guide.mp4`. The screens in it show the real class names inside the product, while the narration and page wording do not name a class.
+
 ## Home page: "Be inspired" slideshow
 
 - A rotating slideshow of real results from past years (IIT JEE, CBSE, NEET) with a source link on every slide, in `src/components/news-slideshow.tsx`. Items live in `news_items` (server-only) and are managed in the admin portal's News tab; starter items are in `content/news.mjs` (`npm run seed-news`, safe to re-run). CBSE publishes no official topper list, so CBSE toppers must be labelled as media reports. Only http(s) source links are accepted. Names are optional. No student photos are shown or stored on our site: each slide links to the original article, where any photo appears.
