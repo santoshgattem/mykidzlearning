@@ -23,10 +23,10 @@ async function loadSlides(): Promise<Slide[]> {
 }
 
 const LADDER = [
-  { tier: "bronze", icon: "🥉", name: "Bronze", pts: "1,000 pts", reward: "₹100 pocket money for every 1,000 pts" },
-  { tier: "silver", icon: "🥈", name: "Silver", pts: "10,000 pts", reward: "Gift of their choice" },
-  { tier: "gold", icon: "🥇", name: "Gold", pts: "50,000 pts", reward: "Wireless headphones" },
-  { tier: "diamond", icon: "💎", name: "Diamond", pts: "1,00,000 pts", reward: "New mobile phone" },
+  { tier: "bronze", icon: "🥉", name: "Bronze", pts: "1,000 pts" },
+  { tier: "silver", icon: "🥈", name: "Silver", pts: "10,000 pts" },
+  { tier: "gold", icon: "🥇", name: "Gold", pts: "50,000 pts" },
+  { tier: "diamond", icon: "💎", name: "Diamond", pts: "1,00,000 pts" },
 ] as const;
 
 const TIER_BG = {
@@ -92,7 +92,6 @@ export default async function Home() {
                   <b>
                     {r.name}, {r.pts}
                   </b>
-                  <div className="text-sm text-muted">{r.reward}</div>
                 </div>
               </div>
             ))}
