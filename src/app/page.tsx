@@ -23,10 +23,10 @@ async function loadSlides(): Promise<Slide[]> {
 }
 
 const LADDER = [
-  { tier: "bronze", icon: "🥉", name: "Bronze", pts: "1,000 pts" },
-  { tier: "silver", icon: "🥈", name: "Silver", pts: "10,000 pts" },
-  { tier: "gold", icon: "🥇", name: "Gold", pts: "50,000 pts" },
-  { tier: "diamond", icon: "💎", name: "Diamond", pts: "1,00,000 pts" },
+  { tier: "bronze", icon: "🥉", name: "Bronze", pts: "1,000 pts", ideas: "Stationery set, a storybook, an ice-cream outing" },
+  { tier: "silver", icon: "🥈", name: "Silver", pts: "10,000 pts", ideas: "New school bag, sports shoes, a science kit" },
+  { tier: "gold", icon: "🥇", name: "Gold", pts: "50,000 pts", ideas: "Bicycle, headphones, a LEGO or board-game set, a book-shop trip" },
+  { tier: "diamond", icon: "💎", name: "Diamond", pts: "1,00,000 pts", ideas: "Gaming console, tablet, a trip to a museum or science centre" },
 ] as const;
 
 const TIER_BG = {
@@ -92,10 +92,11 @@ export default async function Home() {
                   <b>
                     {r.name}, {r.pts}
                   </b>
+                  <div className="text-sm text-muted">{r.ideas}</div>
                 </div>
               </div>
             ))}
-            <p className="text-sm text-muted">Little celebrations along the way. Parents set the points and rewards; these are examples.</p>
+            <p className="text-sm text-muted">Study hard, earn big. These are only examples: parents set the points and choose the rewards that suit their child.</p>
           </div>
         </section>
 
