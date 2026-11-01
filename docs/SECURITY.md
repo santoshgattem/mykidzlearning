@@ -38,6 +38,20 @@
 - An attacker who knows a student's email can lock that student out for 15 minutes by guessing wrongly. This is the cost of a 4-digit PIN; the parent can reset the PIN.
 - The limiter fails open (and logs) if the database call itself fails.
 
+## Re-check after the Sets, reminders, contact, news and password-reset features (November 2026)
+
+`npm run security-check` (script: `scripts/security-check.mjs`) creates temporary accounts (an admin, two parents, two students) plus an anonymous visitor, tests them against every table and function, then deletes them. It never edits real accounts' data. Result: **156 of 156 checks pass** across all 27 tables.
+
+- Anonymous visitors see no rows in any table; students see only their own rows; a parent sees only their own children; one family never sees another's.
+- Server-only tables (`contact_messages`, `grade_requests`, `parent_requests`, `password_resets`, `rate_limit_hits`, `weekly_reminders`, `news_items`, paper and question answers) return nothing to students, parents, admins or anonymous visitors through the public API.
+- The server-only functions (`add_points`, `begin_pin_attempt`, `rate_limit_hit`, `rate_limit_reset`, `revoke_user_sessions`, `paper_set_answer`) cannot be called by anyone but the service role, and a student's points were unchanged after the attempts.
+- Public sign-up is closed (an anonymous sign-up request is refused).
+- A parent cannot edit another family's milestones or video links, cannot set a child's points, cannot write the points ledger, and cannot make themselves admin; a student cannot edit their own milestones, points or role.
+- By design a parent can edit their own children's milestones and video links.
+- `npm audit` (production packages): 0 vulnerabilities. Live response headers (HSTS, CSP, X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy, COOP) confirmed.
+
+Still not verifiable from code: the dashboard checklist below (2-step verification, Anthropic spend limit, Supabase backups).
+
 ## Before going live: dashboard checklist
 
 Supabase
